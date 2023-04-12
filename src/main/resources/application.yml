@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://ec2-3-34-47-181.ap-northeast-2.compute.amazonaws.com:33/gss
+    url: jdbc:mysql://ec2-43-200-4-240.ap-northeast-2.compute.amazonaws.com:33/gss
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password:
