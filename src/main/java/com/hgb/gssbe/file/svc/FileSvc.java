@@ -32,10 +32,11 @@ public class FileSvc {
     private FileDao fileDao;
 
     @Transactional(rollbackFor = {IOException.class, InvalidFormatException.class, Exception.class})
-    public List<FileOrderInfoResList> orderExcelUpload(List<MultipartFile> files) throws IOException, InvalidFormatException {
-        List<FileOrderInfoResList> resultList = new ArrayList<>();
+    public List<FileUploadRes> orderExcelUpload(List<MultipartFile> files, String userId) throws IOException, InvalidFormatException {
+        List<FileUploadRes> resultList = new ArrayList<>();
+        boolean isSave = true;
         for(MultipartFile file: files){
-
+            FileUploadRes res = new FileUploadRes();
             FileOrderInfoResList result = new FileOrderInfoResList();
             List<FileOrderInfo> list = new ArrayList<>();
 
@@ -58,7 +59,16 @@ public class FileSvc {
 
                 row = sheet.getRow(Excel.ORGANIZATION.getRow());
                 String orgTmpName = row.getCell(Excel.ORGANIZATION.getCell()).toString();
-                info.setOrgInfos(fileDao.selectOrgInfos(orgTmpName));
+                FileOrganization orgInfo = fileDao.selectOrgInfos(orgTmpName);
+                if (orgInfo == null) {
+                    isSave = false;
+                    res.setFileName(file.getOriginalFilename());
+                    res.setResultCode("fail");
+                    res.setResultMessage("회사 이름이 맞지 않습니다");
+                    break;
+                }
+                info.setOrgId(orgInfo.getOrgId());
+                info.setOrgName(orgInfo.getOrgNm());
 
                 row = sheet.getRow(Excel.ORDERING_DATE.getRow());
                 info.setOrderingDaTe(row.getCell(Excel.ORDERING_DATE.getCell()).toString());
@@ -132,19 +142,36 @@ public class FileSvc {
                 info.setProducts(products);
                 list.add(info);
             }
-            File path = new File(FilePath.TMP_PATH.getPath());
-            if(!path.exists()){
-               path.mkdirs();
+
+            if(isSave) {
+                File path = new File(FilePath.TMP_PATH.getPath());
+                if(!path.exists()){
+                    path.mkdirs();
+                }
+
+                File fileClass = new File(FilePath.TMP_PATH.getPath() + "\\" + fileId +".xlsx");
+
+                FileOutputStream out = new FileOutputStream(fileClass);
+                workbook.write(out);
+                workbook.close();
+                out.close();
+                res.setFileName(file.getOriginalFilename());
+                res.setResultCode("success");
+                res.setFileId(fileId);
+                res.setResultMessage("성공");
+
+                for (FileOrderInfo fileOrderInfo : list){
+                    fileOrderInfo.setUserId(userId);
+                    fileOrderInfo.setFileId(fileId);
+                    fileDao.insertOrder(fileOrderInfo);
+                    for(FileProduct dto : fileOrderInfo.getProducts()){
+                        dto.setOrderId(fileOrderInfo.getOrgId());
+                        dto.setUserId(userId);
+                        fileDao.insertProduct(dto);
+                    }
+                }
             }
-
-            File fileClass = new File(FilePath.TMP_PATH.getPath() + "\\" + fileId +".xlsx");
-
-            FileOutputStream out = new FileOutputStream(fileClass);
-            workbook.write(out);
-            workbook.close();
-            out.close();
-            result.setList(list);
-            resultList.add(result);
+            resultList.add(res);
         }
         return resultList;
     }

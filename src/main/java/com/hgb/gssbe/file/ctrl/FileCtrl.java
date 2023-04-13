@@ -4,7 +4,9 @@ package com.hgb.gssbe.file.ctrl;
 import com.hgb.gssbe.file.model.FileDetailRes;
 import com.hgb.gssbe.file.model.FileOrderInfoResList;
 import com.hgb.gssbe.file.model.FileResList;
+import com.hgb.gssbe.file.model.FileUploadRes;
 import com.hgb.gssbe.file.svc.FileSvc;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,25 +26,27 @@ public class FileCtrl {
     private FileSvc fileSvc;
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<FileOrderInfoResList>> uploadOrderExcel(@RequestPart(value="file") List<MultipartFile> files) throws Exception {
+    @Operation(description = "파일 등록")
+    public ResponseEntity<List<FileUploadRes>> uploadOrderExcel(@RequestPart(value="file") List<MultipartFile> files) throws Exception {
 
-        List<FileOrderInfoResList> result = fileSvc.orderExcelUpload(files);
+        String userId = "test";
+        List<FileUploadRes> result = fileSvc.orderExcelUpload(files,userId);
 
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 
     @GetMapping
+    @Operation(description = "파일 목록 조회")
     public ResponseEntity<FileResList> getFiles(){
         FileResList result = fileSvc.selectFiles();
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 
     @GetMapping("{fileId}")
+    @Operation(description = "파일 상세정보")
     public ResponseEntity<FileDetailRes> getFileDetail(@PathVariable String fileId){
         FileDetailRes result = fileSvc.selectFileDetail(fileId);
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
-
-
 
 }

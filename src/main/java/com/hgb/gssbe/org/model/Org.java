@@ -3,7 +3,7 @@ package com.hgb.gssbe.org.model;
 import lombok.Data;
 
 @Data
-public class OrgDetailRes {
+public class Org {
 
     private String orgId;
 

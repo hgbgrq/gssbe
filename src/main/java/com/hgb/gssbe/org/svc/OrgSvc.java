@@ -1,6 +1,7 @@
 package com.hgb.gssbe.org.svc;
 
 import com.hgb.gssbe.org.dao.OrgDao;
+import com.hgb.gssbe.org.model.Org;
 import com.hgb.gssbe.org.model.OrgReq;
 import com.hgb.gssbe.org.model.OrgRes;
 import com.hgb.gssbe.org.model.OrgResList;
@@ -18,18 +19,15 @@ public class OrgSvc {
     private OrgDao orgDao;
 
     public OrgResList selectOrgList(OrgReq orgReq){
-        log.info("조직 검색 시작");
-
         OrgResList result = new OrgResList();
-
         List<OrgRes> list = orgDao.selectOrgList(orgReq);
-
         Integer totalCount = orgDao.selectOrgCount(orgReq);
-
         result.setList(list);
         result.setTotalCount(totalCount);
-
         return result;
+    }
+
+    public void createOrg(Org org){
 
     }
 

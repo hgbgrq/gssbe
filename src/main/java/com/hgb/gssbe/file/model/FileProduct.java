@@ -17,6 +17,10 @@ public class FileProduct {
 
     private String qty;
 
+    private String orderId;
+
+    private String userId;
+
     public String toStringJson() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
     }

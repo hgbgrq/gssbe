@@ -11,7 +11,7 @@
             , ORG_NUMBER
             , ORG_PAX_NUMBER
         FROM
-            TB_ORGANIZATION
+            gss.TB_ORGANIZATION
     </select>
 
     <select id="selectOrgCount" parameterType="com.hgb.gssbe.org.model.OrgReq"
@@ -19,6 +19,6 @@
         SELECT
             COUNT(ORG_ID)
         FROM
-            TB_ORGANIZATION
+            gss.TB_ORGANIZATION
     </select>
 </mapper>

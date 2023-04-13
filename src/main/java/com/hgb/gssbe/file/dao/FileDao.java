@@ -8,7 +8,7 @@ import java.util.List;
 @Mapper
 public interface FileDao {
 
-    List<FileOrganization> selectOrgInfos(String orgTmpNm);
+    FileOrganization selectOrgInfos(String orgTmpNm);
 
     void insertFile(FileEnroll file);
 
@@ -19,5 +19,9 @@ public interface FileDao {
     FileDetailRes selectFileDetail(String fileId);
 
     List<FileDetailOrderRes> selectFileDetailOrders(String fileId);
+
+    void insertOrder(FileOrderInfo fileOrderInfo);
+
+    void insertProduct(FileProduct fileProduct);
 
 }

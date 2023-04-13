@@ -1,6 +1,6 @@
 package com.hgb.gssbe.org.ctrl;
 
-import com.hgb.gssbe.org.model.OrgDetailRes;
+import com.hgb.gssbe.org.model.Org;
 import com.hgb.gssbe.org.model.OrgReq;
 import com.hgb.gssbe.org.model.OrgResList;
 import com.hgb.gssbe.org.svc.OrgSvc;
@@ -26,14 +26,14 @@ public class OrgCtrl {
 
     @GetMapping(value = "/{orgId}")
     @Operation(description = "조직 상세 조회")
-    public ResponseEntity<OrgDetailRes> getOrgDetail(@PathVariable String orgId){
-        OrgDetailRes result = new OrgDetailRes();
+    public ResponseEntity<Org> getOrgDetail(@PathVariable String orgId){
+        Org result = new Org();
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @PostMapping
     @Operation(description = "조직 등록")
-    public ResponseEntity<String> createOrg(){
+    public ResponseEntity<String> createOrg(Org org){
         return new ResponseEntity<>("OK", HttpStatus.OK);
     }
 }

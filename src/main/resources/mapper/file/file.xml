@@ -24,23 +24,22 @@
             ORG_ID
             , ORG_NAME
         FROM
-            TB_ORGANIZATION
+            gss.TB_ORGANIZATION
         WHERE
-            ORG_NAME LIKE CONCAT('%', #{orgTmpNm} , '%')
+            ORG_NAME = #{orgTmpNm}
     </select>
 
     <insert id="insertFile" parameterType="com.hgb.gssbe.file.model.FileEnroll">
-        INSERT INTO TB_FILE(
+        INSERT INTO gss.TB_FILE(
              FILE_ID
             , FILE_NAME
             , FILE_PATH
             , FILE_USE_YN
-            , TMP_YN)
+        )
         VALUES(
              #{fileId}
             , #{fileName}
             , #{filePath}
-            , 'Y'
             , 'Y'
             )
     </insert>
@@ -50,7 +49,7 @@
             FILE_ID
             , FILE_NAME
         FROM
-            TB_FILE
+            gss.TB_FILE
         WHERE
             1=1
             AND
@@ -61,7 +60,7 @@
         SELECT
             COUNT(1)
         FROM
-            TB_FILE
+            gss.TB_FILE
         WHERE
             1=1
             AND
@@ -74,7 +73,7 @@
             FILE_ID
             , FILE_NAME
         FROM
-            TB_FILE
+            gss.TB_FILE
         WHERE
             FILE_ID = #{fileId}
     </select>
@@ -94,13 +93,64 @@
              , TP.PRODUCT_PRICE AS PRD_ETC
              , TP.PRODUCT_ETC AS prd_etc
         FROM
-            TB_ORDER TOR
-                LEFT JOIN TB_ORGANIZATION TON
+            gss.TB_ORDER TOR
+                LEFT JOIN gss.TB_ORGANIZATION TON
                           ON TOR.ORDER_ORG_ID = TON.ORG_ID
-                LEFT JOIN TB_PRODUCT TP
+                LEFT JOIN gss.TB_PRODUCT TP
                           ON TP.ORDER_ID = TOR.ORDER_ID
         WHERE
             TOR.FILE_ID = #{fileId};
     </select>
+
+    <insert id="insertOrder" parameterType="com.hgb.gssbe.file.model.FileOrderInfo">
+        INSERT INTO gss.TB_ORDER
+            (
+                   FILE_ID
+                 , ORDER_ORG_ID
+                 , ORDER_ORDERING_DATE
+                 , ORDER_DEAD_LINE_DATE
+                 , CREATE_DATE
+                 , CREATE_USER_ID
+                 , UPDATE_DATE
+                 , CREATE_USER_ID
+            )
+        VALUES (
+                   #{fileId}
+               , #{orgId}
+               , #{orderingDaTe}
+               , #{deadLineDate}
+               , NOW()
+               , #{userId}
+               , NOW()
+               , #{userId}
+               )
+    </insert>
+
+    <insert id = "insertProduct" parameterType="com.hgb.gssbe.file.model.FileOrderInfo">
+        INSERT INTO gss.TB_PRODUCT (
+             ORDER_ID
+           , PRODUCT_STYLE_NO
+           , PRODUCT_ITEM
+           , PRODUCT_SIZE
+           , PRODUCT_COLOR
+           , PRODUCT_QTY
+           , CREATE_DATE
+           , CREATE_USER_ID
+           , UPDATE_DATE
+           , CREATE_USER_ID
+        )VALUES
+             (
+                #{orderId}
+             , #{styleNo}
+             , #{item}
+             , #{size}
+             , #{color}
+             , #{qty}
+             , NOW()
+             , #{userId}
+             , NOW()
+             , #{userId}
+             )
+    </insert>
 
 </mapper>
