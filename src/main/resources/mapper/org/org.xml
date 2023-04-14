@@ -6,12 +6,24 @@
             resultType="com.hgb.gssbe.org.model.OrgRes">
         SELECT
             ORG_ID
-            , ORG_NAME
-            , ORG_ADDRESS
-            , ORG_NUMBER
-            , ORG_PAX_NUMBER
+             , ORG_NAME
+             , ORG_ADDRESS
+             , ORG_NUMBER
+             , ORG_PAX_NUMBER
         FROM
             gss.TB_ORGANIZATION
+        WHERE
+            1 = 1
+            <if test='keyWord !=null and keyWord != ""'>
+            AND
+            (
+                ORG_NAME LIKE CONCAT('%', #{keyWord}, '%')
+                OR
+                ORG_NUMBER LIKE CONCAT('%', #{keyWord}, '%')
+                OR
+                ORG_PAX_NUMBER LIKE CONCAT('%', #{keyWord}, '%')
+            )
+            </if>
     </select>
 
     <select id="selectOrgCount" parameterType="com.hgb.gssbe.org.model.OrgReq"
@@ -20,6 +32,18 @@
             COUNT(ORG_ID)
         FROM
             gss.TB_ORGANIZATION
+        WHERE
+        1 = 1
+        <if test='keyWord !=null and keyWord != ""'>
+        AND
+        (
+            ORG_NAME LIKE CONCAT('%', #{keyWord}, '%')
+            OR
+            ORG_NUMBER LIKE CONCAT('%', #{keyWord}, '%')
+            OR
+            ORG_PAX_NUMBER LIKE CONCAT('%', #{keyWord}, '%')
+        )
+        </if>
     </select>
 
     <select id ="selectOrgCountByName" parameterType="java.lang.String" resultType="java.lang.Integer">

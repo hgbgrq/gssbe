@@ -36,6 +36,7 @@ public class FileSvc {
         List<FileUploadRes> resultList = new ArrayList<>();
         boolean isSave = true;
         for(MultipartFile file: files){
+
             FileUploadRes res = new FileUploadRes();
             FileOrderInfoResList result = new FileOrderInfoResList();
             List<FileOrderInfo> list = new ArrayList<>();
@@ -45,8 +46,6 @@ public class FileSvc {
             fileEnroll.setFileId(fileId);
             fileEnroll.setFilePath(FilePath.TMP_PATH.getPath());
             fileEnroll.setFileName(file.getOriginalFilename());
-
-            fileDao.insertFile(fileEnroll);
             result.setFileId(fileId);
 
             OPCPackage opcPackage = OPCPackage.open(file.getInputStream());
@@ -144,6 +143,9 @@ public class FileSvc {
             }
 
             if(isSave) {
+
+                fileDao.insertFile(fileEnroll);
+
                 File path = new File(FilePath.TMP_PATH.getPath());
                 if(!path.exists()){
                     path.mkdirs();
@@ -165,7 +167,7 @@ public class FileSvc {
                     fileOrderInfo.setFileId(fileId);
                     fileDao.insertOrder(fileOrderInfo);
                     for(FileProduct dto : fileOrderInfo.getProducts()){
-                        dto.setOrderId(fileOrderInfo.getOrgId());
+                        dto.setOrderId(fileOrderInfo.getOrderId());
                         dto.setUserId(userId);
                         fileDao.insertProduct(dto);
                     }
@@ -176,11 +178,11 @@ public class FileSvc {
         return resultList;
     }
 
-    public FileResList selectFiles(){
+    public FileResList selectFiles(FileReq fileReq){
         FileResList result = new FileResList();
 
-        List<FileRes> list = fileDao.selectFiles();
-        Integer count = fileDao.selectFilesCount();
+        List<FileRes> list = fileDao.selectFiles(fileReq);
+        Integer count = fileDao.selectFilesCount(fileReq);
 
         result.setList(list);
         result.setTotalCount(count);

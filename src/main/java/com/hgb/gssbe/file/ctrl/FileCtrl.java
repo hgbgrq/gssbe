@@ -1,10 +1,7 @@
 package com.hgb.gssbe.file.ctrl;
 
 
-import com.hgb.gssbe.file.model.FileDetailRes;
-import com.hgb.gssbe.file.model.FileOrderInfoResList;
-import com.hgb.gssbe.file.model.FileResList;
-import com.hgb.gssbe.file.model.FileUploadRes;
+import com.hgb.gssbe.file.model.*;
 import com.hgb.gssbe.file.svc.FileSvc;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,8 +34,8 @@ public class FileCtrl {
 
     @GetMapping
     @Operation(description = "파일 목록 조회")
-    public ResponseEntity<FileResList> getFiles(){
-        FileResList result = fileSvc.selectFiles();
+    public ResponseEntity<FileResList> getFiles(FileReq fileReq){
+        FileResList result = fileSvc.selectFiles(fileReq);
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 

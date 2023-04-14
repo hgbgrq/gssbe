@@ -4,7 +4,7 @@ import lombok.Data;
 
 public class GssException extends RuntimeException{
 
-    private String ymlKey;
+    private final String ymlKey;
 
     public GssException(String ymlKey){
         this.ymlKey = ymlKey;

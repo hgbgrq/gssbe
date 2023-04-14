@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:log4jdbc:postgresql://localhost:5432/gss
+    url: jdbc:log4jdbc:postgresql://ec2-15-164-222-108.ap-northeast-2.compute.amazonaws.com:5432/gss
     username: postgres
     password: root
     driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy

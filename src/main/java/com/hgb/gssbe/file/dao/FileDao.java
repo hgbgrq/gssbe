@@ -12,9 +12,9 @@ public interface FileDao {
 
     void insertFile(FileEnroll file);
 
-    List<FileRes> selectFiles();
+    List<FileRes> selectFiles(FileReq fileReq);
 
-    Integer selectFilesCount();
+    Integer selectFilesCount(FileReq fileReq);
 
     FileDetailRes selectFileDetail(String fileId);
 

@@ -5,6 +5,8 @@ import com.hgb.gssbe.org.model.OrgReq;
 import com.hgb.gssbe.org.model.OrgResList;
 import com.hgb.gssbe.org.svc.OrgSvc;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +21,12 @@ public class OrgCtrl {
 
     @GetMapping
     @Operation(description = "조직 현황 조회")
-    public ResponseEntity<OrgResList> getOrgList(OrgReq orgReq){
+    @Parameters(
+            {
+                    @Parameter(name = "keyWord" , description = "키워드(이름,전화번호,팩스번호)" , example = "테스트1")
+            }
+    )
+    public ResponseEntity<OrgResList> getOrgList(@Parameter(hidden = true) OrgReq orgReq){
         OrgResList result = orgSvc.selectOrgList(orgReq);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }

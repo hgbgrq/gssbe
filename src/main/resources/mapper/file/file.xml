@@ -102,7 +102,7 @@
             TOR.FILE_ID = #{fileId};
     </select>
 
-    <insert id="insertOrder" parameterType="com.hgb.gssbe.file.model.FileOrderInfo">
+    <insert id="insertOrder" parameterType="com.hgb.gssbe.file.model.FileOrderInfo" useGeneratedKeys="true" keyProperty ="orderId" keyColumn="ORDER_ID">
         INSERT INTO gss.TB_ORDER
             (
                    FILE_ID

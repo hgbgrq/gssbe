@@ -6,6 +6,9 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 @Data
 public class OrgReq {
+
+    private String keyWord;
+
     public String toStringJson() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
     }
