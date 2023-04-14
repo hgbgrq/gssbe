@@ -21,4 +21,38 @@
         FROM
             gss.TB_ORGANIZATION
     </select>
+
+    <select id ="selectOrgCountByName" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT
+            COUNT(1)
+        FROM
+            gss.TB_ORGANIZATION
+        WHERE
+            ORG_NAME = #{orgName}
+    </select>
+    
+    <insert id="createOrg" parameterType="com.hgb.gssbe.org.model.Org">
+        INSERT INTO gss.TB_ORGANIZATION
+            (
+                ORG_NAME
+                , ORG_ADDRESS
+                , ORG_NUMBER
+                , ORG_PAX_NUMBER
+                , CREATE_DATE
+                , CREATE_USER_ID
+                , UPDATE_DATE
+                , UPDATE_USER_ID
+            )
+        VALUES
+            (
+                #{orgName}
+            , #{orgAddress}
+            , #{orgNumber}
+            , #{orgPaxNumber}
+            , NOW()
+            , #{userId}
+            , NOW()
+            , #{userId}
+            )
+    </insert>
 </mapper>

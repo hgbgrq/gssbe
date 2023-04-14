@@ -1,8 +1,8 @@
 package com.hgb.gssbe.file.svc;
 
 
-import com.hgb.gssbe.common.Excel;
-import com.hgb.gssbe.common.FilePath;
+import com.hgb.gssbe.common.constance.Excel;
+import com.hgb.gssbe.common.constance.FilePath;
 import com.hgb.gssbe.file.dao.FileDao;
 import com.hgb.gssbe.file.model.*;
 import lombok.extern.slf4j.Slf4j;

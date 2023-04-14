@@ -1,4 +1,4 @@
-package com.hgb.gssbe.common;
+package com.hgb.gssbe.common.constance;
 
 public enum FilePath {
 

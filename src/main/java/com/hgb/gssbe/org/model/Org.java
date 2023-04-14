@@ -15,4 +15,6 @@ public class Org {
 
     private String orgPaxNumber;
 
+    private String userId;
+
 }

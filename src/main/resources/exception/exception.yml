@@ -1,0 +1,13 @@
+exception:
+  testException:
+    code: 00000002
+    desc: "테스트 에러"
+    status: 500
+  registered-org-name:
+    code: 00000003
+    desc: "이미 등록된 회사 이름입니다"
+    status: 500
+  notdefined:
+    code: 00000001
+    desc: "정의되지 않은 예외"
+    status: 500

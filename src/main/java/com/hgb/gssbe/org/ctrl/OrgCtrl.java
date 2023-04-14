@@ -34,6 +34,8 @@ public class OrgCtrl {
     @PostMapping
     @Operation(description = "조직 등록")
     public ResponseEntity<String> createOrg(Org org){
+        org.setUserId("test");
+        orgSvc.createOrg(org);
         return new ResponseEntity<>("OK", HttpStatus.OK);
     }
 }

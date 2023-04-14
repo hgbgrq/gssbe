@@ -1,5 +1,6 @@
 package com.hgb.gssbe.org.svc;
 
+import com.hgb.gssbe.common.exception.GssException;
 import com.hgb.gssbe.org.dao.OrgDao;
 import com.hgb.gssbe.org.model.Org;
 import com.hgb.gssbe.org.model.OrgReq;
@@ -29,6 +30,11 @@ public class OrgSvc {
 
     public void createOrg(Org org){
 
+        if (orgDao.selectOrgCountByName(org.getOrgName()) > 0){
+            throw new GssException("registered-org-name");
+        }
+
+        orgDao.createOrg(org);
     }
 
 }
