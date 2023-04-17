@@ -10,4 +10,6 @@ public class GssBeApplication {
         SpringApplication.run(GssBeApplication.class, args);
     }
 
+
+
 }

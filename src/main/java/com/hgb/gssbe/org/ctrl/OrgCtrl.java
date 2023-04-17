@@ -45,4 +45,11 @@ public class OrgCtrl {
         orgSvc.createOrg(org);
         return new ResponseEntity<>("OK", HttpStatus.OK);
     }
+
+    @PostMapping("/delete")
+    @Operation(description = "조직 삭제")
+    public ResponseEntity<String> deleteOrg(String orgId){
+        orgSvc.deleteOrg(orgId);
+        return new ResponseEntity<>("OK", HttpStatus.OK);
+    }
 }

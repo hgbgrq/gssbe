@@ -79,4 +79,10 @@
             , #{userId}
             )
     </insert>
+
+    <delete id="deleteOrg" parameterType="java.lang.String">
+        DELETE FROM gss.TB_ORGANIZATION
+        WHERE
+            ORG_ID = #{orgId}
+    </delete>
 </mapper>

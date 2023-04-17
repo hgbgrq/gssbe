@@ -37,4 +37,8 @@ public class OrgSvc {
         orgDao.createOrg(org);
     }
 
+    public void deleteOrg(String orgId){
+        orgDao.deleteOrg(orgId);
+    }
+
 }
