@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/org")
 public class OrgCtrl {
@@ -40,7 +42,7 @@ public class OrgCtrl {
 
     @PostMapping
     @Operation(description = "조직 등록")
-    public ResponseEntity<String> createOrg(Org org){
+    public ResponseEntity<String> createOrg(@RequestBody Org org){
         org.setUserId("test");
         orgSvc.createOrg(org);
         return new ResponseEntity<>("OK", HttpStatus.OK);
@@ -48,8 +50,15 @@ public class OrgCtrl {
 
     @PostMapping("/delete")
     @Operation(description = "조직 삭제")
-    public ResponseEntity<String> deleteOrg(String orgId){
-        orgSvc.deleteOrg(orgId);
+    public ResponseEntity<String> deleteOrg(@RequestBody List<String> orgIds){
+        orgSvc.deleteOrg(orgIds);
         return new ResponseEntity<>("OK", HttpStatus.OK);
     }
+
+    @GetMapping("/check/{orgName}")
+    public ResponseEntity<Boolean> checkDuplicationName(@PathVariable String orgName){
+        Boolean result = orgSvc.checkDuplicationName(orgName);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
 }

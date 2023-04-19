@@ -37,8 +37,14 @@ public class OrgSvc {
         orgDao.createOrg(org);
     }
 
-    public void deleteOrg(String orgId){
-        orgDao.deleteOrg(orgId);
+    public void deleteOrg(List<String> orgIds){
+        for(String orgId : orgIds){
+            orgDao.deleteOrg(orgId);
+        }
+    }
+
+    public Boolean checkDuplicationName(String orgName){
+        return orgDao.countByOrgName(orgName) > 0;
     }
 
 }
