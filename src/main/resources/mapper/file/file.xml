@@ -34,7 +34,7 @@
              FILE_ID
             , FILE_NAME
             , FILE_PATH
-            , FILE_USE_YN
+            , USE_YN
         )
         VALUES(
              #{fileId}
@@ -53,7 +53,7 @@
         WHERE
             1=1
             AND
-            TMP_YN = 'N'
+            USE_YN = 'Y'
     </select>
 
     <select id="selectFilesCount" resultType="java.lang.Integer">
@@ -64,7 +64,7 @@
         WHERE
             1=1
             AND
-            TMP_YN ='N'
+            USE_YN = 'Y'
     </select>
 
     <select id="selectFileDetail" parameterType="java.lang.String"
@@ -112,13 +112,13 @@
                  , CREATE_DATE
                  , CREATE_USER_ID
                  , UPDATE_DATE
-                 , CREATE_USER_ID
+                 , UPDATE_USER_ID
             )
         VALUES (
                    #{fileId}
                , #{orgId}
-               , #{orderingDaTe}
-               , #{deadLineDate}
+               , TO_TIMESTAMP(#{orderingDaTe},'YYYY년MM월DD일')
+               , TO_TIMESTMAP(#{deadLineDate},'YYYY년MM월DD일')
                , NOW()
                , #{userId}
                , NOW()

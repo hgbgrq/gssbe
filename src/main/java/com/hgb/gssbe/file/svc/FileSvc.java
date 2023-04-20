@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static java.lang.String.format;
+
 @Slf4j
 @Service
 public class FileSvc {
@@ -35,7 +37,7 @@ public class FileSvc {
     public List<FileUploadRes> orderExcelUpload(List<MultipartFile> files, String userId) throws IOException, InvalidFormatException {
         List<FileUploadRes> resultList = new ArrayList<>();
         boolean isSave = true;
-        for(MultipartFile file: files){
+        for(MultipartFile file: files) {
 
             FileUploadRes res = new FileUploadRes();
             FileOrderInfoResList result = new FileOrderInfoResList();
@@ -63,7 +65,7 @@ public class FileSvc {
                     isSave = false;
                     res.setFileName(file.getOriginalFilename());
                     res.setResultCode("fail");
-                    res.setResultMessage("회사 이름이 맞지 않습니다");
+                    res.setResultMessage(format("(%s) 이름은 존재하지 않습니다." , orgTmpName));
                     break;
                 }
                 info.setOrgId(orgInfo.getOrgId());
