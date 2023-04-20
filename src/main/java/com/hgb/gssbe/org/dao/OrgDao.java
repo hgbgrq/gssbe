@@ -19,5 +19,7 @@ public interface OrgDao {
 
     void deleteOrg(String orgId);
 
-    Integer countByOrgName(String orgName);
+    Org selectOrgDetail(String orgId);
+
+    void modifyOrg(Org org);
 }

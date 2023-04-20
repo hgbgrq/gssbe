@@ -1,6 +1,6 @@
 package com.hgb.gssbe.common.config;
 
-import com.hgb.gssbe.common.exception.ExceptionResult;
+import com.hgb.gssbe.common.GssResponse;
 import org.springframework.beans.factory.config.YamlMapFactoryBean;
 import org.springframework.core.io.ClassPathResource;
 
@@ -16,13 +16,13 @@ public class ExceptionInfoConfig {
         this.exceptionsInfo = yaml.getObject();
     }
 
-    public ExceptionResult getResultDto(String ymlKey) {
+    public GssResponse getResultDto(String ymlKey) {
         Map<String, Object> exceptionInfos = (Map<String, Object>) exceptionsInfo.get("exception");
         Map<String, Object> exceptionInfo = (Map<String, Object>) exceptionInfos.get(ymlKey);
         if(exceptionInfo == null) {
             exceptionInfo = (Map<String, Object>) exceptionInfos.get("notdefined");
         }
-        ExceptionResult result = new ExceptionResult();
+        GssResponse result = new GssResponse();
         result.setCode(String.valueOf(exceptionInfo.get("code")));
         result.setDesc(String.valueOf(exceptionInfo.get("desc")));
         result.setStatus(String.valueOf(exceptionInfo.get("status")));

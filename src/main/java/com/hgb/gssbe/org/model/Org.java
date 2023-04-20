@@ -1,9 +1,10 @@
 package com.hgb.gssbe.org.model;
 
+import com.hgb.gssbe.common.GssResponse;
 import lombok.Data;
 
 @Data
-public class Org {
+public class Org extends GssResponse {
 
     private String orgId;
 
@@ -14,6 +15,14 @@ public class Org {
     private String orgNumber;
 
     private String orgPaxNumber;
+
+    private String orgEmail;
+
+    private String orgAddressDetail;
+
+    private String orgZoneCode;
+
+    private String orgEtc;
 
     private String userId;
 

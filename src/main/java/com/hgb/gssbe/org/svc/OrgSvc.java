@@ -43,8 +43,17 @@ public class OrgSvc {
         }
     }
 
+    public Org selectOrgDetail(String orgId){
+        Org result = orgDao.selectOrgDetail(orgId);
+        return result;
+    }
+
     public Boolean checkDuplicationName(String orgName){
-        return orgDao.countByOrgName(orgName) > 0;
+        return orgDao.selectOrgCountByName(orgName) > 0;
+    }
+
+    public void modifyOrg(Org org){
+        orgDao.modifyOrg(org);
     }
 
 }

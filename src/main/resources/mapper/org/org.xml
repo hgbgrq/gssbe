@@ -14,6 +14,8 @@
             gss.TB_ORGANIZATION
         WHERE
             1 = 1
+            AND
+            USE_YN = 'Y'
             <if test='keyWord !=null and keyWord != ""'>
             AND
             (
@@ -34,6 +36,8 @@
             gss.TB_ORGANIZATION
         WHERE
         1 = 1
+        AND
+        USE_YN = 'Y'
         <if test='keyWord !=null and keyWord != ""'>
         AND
         (
@@ -53,6 +57,8 @@
             gss.TB_ORGANIZATION
         WHERE
             ORG_NAME = #{orgName}
+            AND
+            USE_YN = 'Y'
     </select>
     
     <insert id="createOrg" parameterType="com.hgb.gssbe.org.model.Org">
@@ -62,10 +68,15 @@
                 , ORG_ADDRESS
                 , ORG_NUMBER
                 , ORG_PAX_NUMBER
+                , ORG_EMAIL
+                , ORG_ADDRESS_DETAIL
+                , ORG_ZONE_CODE
+                , ORG_ETC
                 , CREATE_DATE
                 , CREATE_USER_ID
                 , UPDATE_DATE
                 , UPDATE_USER_ID
+                , USE_YN
             )
         VALUES
             (
@@ -73,25 +84,58 @@
             , #{orgAddress}
             , #{orgNumber}
             , #{orgPaxNumber}
+            , #{orgEmail}
+            , #{orgAddressDetail}
+            , #{orgZoneCode}
+            , #{orgEtc}
             , NOW()
             , #{userId}
             , NOW()
             , #{userId}
+            , 'Y'
             )
     </insert>
 
     <delete id="deleteOrg" parameterType="java.lang.String">
-        DELETE FROM gss.TB_ORGANIZATION
+        UPDATE gss.TB_ORGANIZATION
+        SET
+            USE_YN ='N'
         WHERE
             ORG_ID = #{orgId}
     </delete>
 
-    <select id ="countByOrgName" parameterType="java.lang.String" resultType="java.lang.Integer">
+    <select id ="selectOrgDetail" parameterType="java.lang.String" resultType="com.hgb.gssbe.org.model.Org">
         SELECT
-            COUNT(1)
+            ORG_ID
+            ,ORG_NAME
+            ,ORG_ADDRESS
+            ,ORG_NUMBER
+            ,ORG_PAX_NUMBER
+            ,ORG_EMAIL
+            ,ORG_ADDRESS_DETAIL
+            ,ORG_ZONE_CODE
+            ,ORG_ETC
         FROM
             gss.TB_ORGANIZATION
         WHERE
-            ORG_NAME = #{orgName}
+            ORG_ID = #{orgId}
+
     </select>
+
+    <update id = "modifyOrg" parameterType="com.hgb.gssbe.org.model.Org">
+        UPDATE gss.TB_ORGANIZATION
+        SET
+            ORG_NAME = #{orgName}
+            , ORG_ADDRESS = #{orgAddress}
+            , ORG_NUMBER = #{orgNumber}
+            , ORG_PAX_NUMBER = #{orgPaxNumber}
+            , ORG_EMAIL = #{orgEmail}
+            , ORG_ADDRESS_DETAIL = #{orgAddressDetail}
+            , ORG_ZONE_CODE = #{orgZoneCode}
+            , ORG_ETC = #{orgEtc}
+            , UPDATE_DATE = NOW()
+            , UPDATE_USER_ID = #{userId}
+        WHERE
+            ORG_ID = #{orgId}
+    </update>
 </mapper>

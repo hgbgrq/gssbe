@@ -1,5 +1,6 @@
 package com.hgb.gssbe.common.exception;
 
+import com.hgb.gssbe.common.GssResponse;
 import com.hgb.gssbe.common.config.ExceptionInfoConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,8 +14,8 @@ public class AppExceptionHandler {
     @Autowired
     ExceptionInfoConfig exceptionInfoConfig;
     @ExceptionHandler(GssException.class)
-    public ResponseEntity<ExceptionResult> GssExceptionHandler(GssException gssException){
-        ExceptionResult result = exceptionInfoConfig.getResultDto(gssException.getYmlKey());
+    public ResponseEntity<GssResponse> GssExceptionHandler(GssException gssException){
+        GssResponse result = exceptionInfoConfig.getResultDto(gssException.getYmlKey());
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

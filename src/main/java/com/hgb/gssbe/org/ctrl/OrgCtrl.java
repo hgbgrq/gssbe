@@ -1,5 +1,6 @@
 package com.hgb.gssbe.org.ctrl;
 
+import com.hgb.gssbe.common.GssResponse;
 import com.hgb.gssbe.org.model.Org;
 import com.hgb.gssbe.org.model.OrgReq;
 import com.hgb.gssbe.org.model.OrgResList;
@@ -36,29 +37,37 @@ public class OrgCtrl {
     @GetMapping(value = "/{orgId}")
     @Operation(description = "조직 상세 조회")
     public ResponseEntity<Org> getOrgDetail(@PathVariable String orgId){
-        Org result = new Org();
+        Org result = orgSvc.selectOrgDetail(orgId);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @PostMapping
     @Operation(description = "조직 등록")
-    public ResponseEntity<String> createOrg(@RequestBody Org org){
+    public ResponseEntity<GssResponse> createOrg(@RequestBody Org org){
         org.setUserId("test");
         orgSvc.createOrg(org);
-        return new ResponseEntity<>("OK", HttpStatus.OK);
+        return new ResponseEntity<>(new GssResponse(), HttpStatus.OK);
     }
 
     @PostMapping("/delete")
     @Operation(description = "조직 삭제")
-    public ResponseEntity<String> deleteOrg(@RequestBody List<String> orgIds){
+    public ResponseEntity<GssResponse> deleteOrg(@RequestBody List<String> orgIds){
         orgSvc.deleteOrg(orgIds);
-        return new ResponseEntity<>("OK", HttpStatus.OK);
+        return new ResponseEntity<>(new GssResponse(), HttpStatus.OK);
     }
 
     @GetMapping("/check/{orgName}")
     public ResponseEntity<Boolean> checkDuplicationName(@PathVariable String orgName){
         Boolean result = orgSvc.checkDuplicationName(orgName);
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PostMapping("/modify")
+    @Operation(description = "조직 수정")
+    public ResponseEntity<GssResponse> modifyOrg(@RequestBody Org org){
+        org.setUserId("test");
+        orgSvc.modifyOrg(org);
+        return new ResponseEntity<>(new GssResponse(), HttpStatus.OK);
     }
 
 }
