@@ -102,13 +102,14 @@
             TOR.FILE_ID = #{fileId};
     </select>
 
-    <insert id="insertOrder" parameterType="com.hgb.gssbe.file.model.FileOrderInfo" useGeneratedKeys="true" keyProperty ="orderId" keyColumn="ORDER_ID">
+    <insert id="insertOrder" parameterType="com.hgb.gssbe.file.model.FileOrderInfo" useGeneratedKeys="true" keyProperty ="orderId" keyColumn="order_id">
         INSERT INTO gss.TB_ORDER
             (
                    FILE_ID
                  , ORDER_ORG_ID
                  , ORDER_ORDERING_DATE
                  , ORDER_DEAD_LINE_DATE
+                 , USE_YN
                  , CREATE_DATE
                  , CREATE_USER_ID
                  , UPDATE_DATE
@@ -118,7 +119,8 @@
                    #{fileId}
                , #{orgId}
                , TO_TIMESTAMP(#{orderingDaTe},'YYYY년MM월DD일')
-               , TO_TIMESTMAP(#{deadLineDate},'YYYY년MM월DD일')
+               , TO_TIMESTAMP(#{deadLineDate},'YYYY년MM월DD일')
+               , 'Y'
                , NOW()
                , #{userId}
                , NOW()
@@ -134,10 +136,11 @@
            , PRODUCT_SIZE
            , PRODUCT_COLOR
            , PRODUCT_QTY
+           , USE_YN
            , CREATE_DATE
            , CREATE_USER_ID
            , UPDATE_DATE
-           , CREATE_USER_ID
+           , UPDATE_USER_ID
         )VALUES
              (
                 #{orderId}
@@ -146,6 +149,7 @@
              , #{size}
              , #{color}
              , #{qty}
+             , 'Y'
              , NOW()
              , #{userId}
              , NOW()
