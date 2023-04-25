@@ -1,6 +1,7 @@
 package com.hgb.gssbe.file.model;
 
 import lombok.Data;
+import org.springframework.http.HttpStatus;
 
 @Data
 public class FileUploadRes {
@@ -12,4 +13,6 @@ public class FileUploadRes {
     private String resultCode;
 
     private String resultMessage;
+
+    private HttpStatus httpStatus;
 }

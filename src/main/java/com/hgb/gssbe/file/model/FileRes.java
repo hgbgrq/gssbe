@@ -9,5 +9,11 @@ public class FileRes {
 
     private String fileName;
 
+    private String createUserId;
+
+    private String createUserName;
+
+    private String createDate;
+
 
 }

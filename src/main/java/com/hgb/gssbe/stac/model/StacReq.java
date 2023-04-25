@@ -5,6 +5,10 @@ import lombok.Data;
 @Data
 public class StacReq {
 
-    private String keyWord;
+    private String orgId;
+
+    private String month;
+
+    private String isPayment;
 
 }

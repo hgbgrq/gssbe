@@ -24,4 +24,9 @@ public interface FileDao {
 
     void insertProduct(FileProduct fileProduct);
 
+    void deleteFile(String fileId);
+
+    void deleteProduct(String fileId);
+
+    void deleteOrder(String fileId);
 }
