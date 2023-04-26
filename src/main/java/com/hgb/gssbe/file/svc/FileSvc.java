@@ -87,6 +87,7 @@ public class FileSvc {
             List<FileProduct> products = new ArrayList<>();
 
             while(true){
+                int count = 0 ;
                 if(currentRow >= 50){
                     break;
                 }
@@ -99,6 +100,7 @@ public class FileSvc {
                 }
                 if(StringUtils.isEmpty(styleNo)){
                     styleNo = tmpStyleNo;
+                    count++;
                 }else{
                     tmpStyleNo = styleNo;
                 }
@@ -106,6 +108,7 @@ public class FileSvc {
                 String item = row.getCell(Excel.ITEM.getCell()).toString();
                 if(StringUtils.isEmpty(item)){
                     item = tmpItem;
+                    count++;
                 }else{
                     tmpItem = item;
                 }
@@ -113,6 +116,7 @@ public class FileSvc {
                 String size = row.getCell(Excel.SIZE.getCell()).toString();
                 if(StringUtils.isEmpty(size)){
                     size = tmpSize;
+                    count++;
                 }else{
                     tmpSize = size;
                 }
@@ -120,6 +124,7 @@ public class FileSvc {
                 String color = row.getCell(Excel.COLOR.getCell()).toString();
                 if(StringUtils.isEmpty(color)){
                     color = tmpColor;
+                    count++;
                 }else{
                     tmpColor = color;
                 }
@@ -127,16 +132,18 @@ public class FileSvc {
                 String qty = row.getCell(Excel.QTY.getCell()).toString();
                 if(StringUtils.isEmpty(qty)){
                     qty = tmpQty;
+                    count++;
                 }else{
                     tmpQty = qty;
                 }
-
-                dto.setColor(color);
-                dto.setQty(qty);
-                dto.setItem(item);
-                dto.setSize(size);
-                dto.setStyleNo(styleNo);
-                products.add(dto);
+                if (count != 5){
+                    dto.setColor(color);
+                    dto.setQty(qty);
+                    dto.setItem(item);
+                    dto.setSize(size);
+                    dto.setStyleNo(styleNo);
+                    products.add(dto);
+                }
 
                 currentRow++;
             }

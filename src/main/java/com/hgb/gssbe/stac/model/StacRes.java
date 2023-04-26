@@ -1,15 +1,13 @@
 package com.hgb.gssbe.stac.model;
 
+import com.hgb.gssbe.common.GssResponse;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-public class StacRes {
+public class StacRes extends GssResponse {
 
-    Integer totalCount;
+    List<Stac> stacList;
 
-    List<StacProduct> productList;
-
-    Integer totalPrice;
 }

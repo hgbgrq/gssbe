@@ -4,6 +4,9 @@ import lombok.Data;
 
 @Data
 public class StacProduct {
+
+    private String productId;
+
     private String prdStyleNo;
 
     private String prdItem;
@@ -20,5 +23,10 @@ public class StacProduct {
 
     private String isPayment;
 
-    private String createDate;
+    private String paymentDate;
+
+    private String orgId;
+
+    private String orgName;
+
 }

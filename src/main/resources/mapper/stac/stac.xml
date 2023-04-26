@@ -1,4 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace = "com.hgb.gssbe.stac.dao.StacDao">
+
+    <resultMap id="stacMap" type="com.hgb.gssbe.stac.model.Stac">
+        <result column="ORDER_MONTH" property="orderMonth" javaType="string"/>
+        <collection property="productList" ofType="com.hgb.gssbe.stac.model.StacProduct">
+            <result column="PRODUCT_ID" property="productId" javaType="string"/>
+            <result column="PRODUCT_STYLE_NO" property="prdStyleNo" javaType="string"/>
+            <result column="PRODUCT_ITEM" property="prdItem" javaType="string"/>
+            <result column="PRODUCT_SIZE" property="prdSize" javaType="string"/>
+            <result column="PRODUCT_COLOR" property="prdColor" javaType="string"/>
+            <result column="PRODUCT_QTY" property="prdQty" javaType="string"/>
+            <result column="PRODUCT_PRICE" property="prdPrc" javaType="string"/>
+            <result column="PRODUCT_ETC" property="prdEtc" javaType="string"/>
+            <result column="IS_PAYMENT" property="isPayment" javaType="string"/>
+            <result column="PAYMENT_DATE" property="paymentDate" javaType="string"/>
+            <result column="ORDER_ORG_ID" property="orgId" javaType="string"/>
+            <result column="ORG_NAME" property="orgName" javaType="string"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectStacList" parameterType="com.hgb.gssbe.stac.model.StacReq" resultMap="stacMap">
+        SELECT
+            TO_CHAR(TOR.ORDER_ORDERING_DATE, 'MM월') ORDER_MONTH
+             , TP.PRODUCT_ID
+             , TP.PRODUCT_STYLE_NO
+             , TP.PRODUCT_ITEM
+             , TP.PRODUCT_SIZE
+             , TP.PRODUCT_COLOR
+             , TP.PRODUCT_QTY
+             , TP.PRODUCT_PRICE
+             , TP.PRODUCT_ETC
+             , TP.IS_PAYMENT
+             , TP.PAYMENT_DATE
+             , TOR.ORDER_ORG_ID
+             , TOG.ORG_NAME
+        FROM
+            GSS.TB_PRODUCT TP
+                LEFT JOIN GSS.TB_ORDER TOR
+                          ON TOR.ORDER_ID = TP.ORDER_ID
+                LEFT JOIN GSS.TB_ORGANIZATION TOG
+                          ON TOG.ORG_ID = TOR.ORDER_ORG_ID
+        WHERE
+            1=1
+            AND
+            TP.USE_YN = 'Y'
+        ORDER BY ORDER_MONTH ASC
+    </select>
 </mapper>

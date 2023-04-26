@@ -7,7 +7,9 @@ public class StacReq {
 
     private String orgId;
 
-    private String month;
+    private String startDate;
+
+    private String endDate;
 
     private String isPayment;
 
