@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace = "com.hgb.gssbe.order.dao.OrderDao">
 
-    <resultMap id="orderDetailMap" type="com.hgb.gssbe.order.model.OrderResDetail">
+    <resultMap id="orderDetailMap" type="com.hgb.gssbe.order.model.Order">
         <result column="ORD_ID" property="orderId" javaType="string"/>
         <result column="ORG_ID" property="orgId" javaType="string"/>
         <result column="ORG_NAME" property="orgName" javaType="string"/>

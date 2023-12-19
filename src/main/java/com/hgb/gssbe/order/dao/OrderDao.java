@@ -4,7 +4,7 @@ package com.hgb.gssbe.order.dao;
 import com.hgb.gssbe.order.model.OrderModel;
 import com.hgb.gssbe.order.model.OrderProductModel;
 import com.hgb.gssbe.order.model.OrderReq;
-import com.hgb.gssbe.order.model.OrderResDetail;
+import com.hgb.gssbe.order.model.Order;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -17,12 +17,14 @@ public interface OrderDao {
 
     Integer selectOrdersCount(OrderReq orderReq);
 
-    OrderResDetail selectDetailOrder(String ordId);
+    Order selectDetailOrder(String ordId);
 
     void insertOrder(OrderModel orderModel);
 
     void insertOrderProduct(OrderProductModel orderProductModel);
 
     void updateFileTmpYn(String fileId);
+
+    void modifyOrder(Order order);
 
 }

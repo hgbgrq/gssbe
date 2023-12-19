@@ -3,6 +3,7 @@ package com.hgb.gssbe.stac.svc;
 
 import com.hgb.gssbe.stac.dao.StacDao;
 import com.hgb.gssbe.stac.model.Stac;
+import com.hgb.gssbe.stac.model.StacProduct;
 import com.hgb.gssbe.stac.model.StacReq;
 import com.hgb.gssbe.stac.model.StacRes;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +19,14 @@ public class StacSvc {
 
     public StacRes selectStacList(StacReq stacReq){
         StacRes result = new StacRes();
-        List<Stac> list =stacDao.selectStacList(stacReq);
+        List<Stac> list = stacDao.selectStacList(stacReq);
         result.setStacList(list);
         return result;
     }
 
+    public void modifyProduct(StacProduct stacProduct){
+
+    }
 
 }
 

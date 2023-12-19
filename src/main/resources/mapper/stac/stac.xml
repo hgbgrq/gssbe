@@ -10,13 +10,14 @@
             <result column="PRODUCT_ITEM" property="prdItem" javaType="string"/>
             <result column="PRODUCT_SIZE" property="prdSize" javaType="string"/>
             <result column="PRODUCT_COLOR" property="prdColor" javaType="string"/>
-            <result column="PRODUCT_QTY" property="prdQty" javaType="string"/>
-            <result column="PRODUCT_PRICE" property="prdPrc" javaType="string"/>
+            <result column="PRODUCT_QTY" property="prdQty" javaType="Integer"/>
+            <result column="PRODUCT_PRICE" property="prdPrc" javaType="Integer"/>
             <result column="PRODUCT_ETC" property="prdEtc" javaType="string"/>
             <result column="IS_PAYMENT" property="isPayment" javaType="string"/>
             <result column="PAYMENT_DATE" property="paymentDate" javaType="string"/>
             <result column="ORDER_ORG_ID" property="orgId" javaType="string"/>
             <result column="ORG_NAME" property="orgName" javaType="string"/>
+            <result column="TOTAL_PRD_PRC" property="totalPrdPrc" javaType="Integer"/>
         </collection>
     </resultMap>
 
@@ -28,8 +29,9 @@
              , TP.PRODUCT_ITEM
              , TP.PRODUCT_SIZE
              , TP.PRODUCT_COLOR
-             , TP.PRODUCT_QTY
-             , TP.PRODUCT_PRICE
+             , TP.PRODUCT_QTY ::DECIMAL
+             , TP.PRODUCT_PRICE ::DECIMAL
+             , CAST(COALESCE((TP.PRODUCT_PRICE ::DECIMAL * TP.PRODUCT_QTY ::DECIMAL) , 0) AS INTEGER) TOTAL_PRD_PRC
              , TP.PRODUCT_ETC
              , TP.IS_PAYMENT
              , TP.PAYMENT_DATE
@@ -45,6 +47,23 @@
             1=1
             AND
             TP.USE_YN = 'Y'
-        ORDER BY ORDER_MONTH ASC
+        <if test ='orgIdList != null and orgIdList.size > 0'>
+            AND
+            TOR.ORDER_ORG_ID IN
+          <foreach collection="orgIdList" item="ordId" open="(" close=")" separator=" , ">
+              #{ordId}
+          </foreach>
+        </if>
+        <if test ='startDate != null and startDate != ""'>
+            AND
+            TO_TIMESTAMP(TO_CHAR(TOR.ORDER_ORDERING_DATE,'YYYY-MM-DD'), 'YYYY-MM-DD') >= TO_TIMESTAMP(#{startDate},'YYYY-MM-DD')
+            AND
+            <![CDATA[TO_TIMESTAMP(TO_CHAR(TOR.ORDER_ORDERING_DATE,'YYYY-MM-DD'), 'YYYY-MM-DD') <= TO_TIMESTAMP(#{startDate}, 'YYYY-MM-DD')]]>
+        </if>
+        <if test ='isPayment != "ALL" and isPayment !="" and isPayment != null'>
+            AND
+            TP.IS_PAYMENT = #{isPayment}
+        </if>
+        ORDER BY ORDER_MONTH ASC, TOG.ORG_NAME
     </select>
 </mapper>

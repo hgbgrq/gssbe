@@ -15,9 +15,11 @@ public class StacProduct {
 
     private String prdColor;
 
-    private String prdQty;
+    private Integer prdQty;
 
-    private String prdPrc;
+    private Integer prdPrc;
+
+    private Integer totalPrdPrc;
 
     private String prdEtc;
 
