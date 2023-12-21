@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace = "com.hgb.gssbe.login.dao.LoginDao">
+
+    <resultMap id="userInfo" type="com.hgb.gssbe.login.model.UserInfo">
+        <result column="USER_ID" property="userId" javaType="string"/>
+        <result column="USER_PASSWORD" property="userPassword" javaType="string"/>
+        <result column="USER_NAME" property="userName" javaType="string"/>
+        <result column="USER_PHONE_NUMBER" property="userPhoneNumber" javaType="string"/>
+        <result column="USER_ADDRESS" property="userAddress" javaType="string"/>
+        <result column="USER_EMAIL" property="userEmail" javaType="string"/>
+        <collection property="grantedAuthorityList" ofType="com.hgb.gssbe.login.model.UserGrantedAuthority">
+            <result column="AUTHORITY_CODE" property="authorityCode" javaType="string"/>
+        </collection>
+    </resultMap>
+
+    <select id = "getUserPassword" parameterType="com.hgb.gssbe.login.model.UserLogin" resultType="java.lang.String">
+        SELECT
+            user_password
+        FROM
+            gss.TB_GSS_USER
+        WHERE
+            user_id = #{userId}
+    </select>
+
+    <select id = "getUserInfo" parameterType="com.hgb.gssbe.login.model.UserLogin" resultMap="userInfo">
+        SELECT
+            tgu.USER_ID
+             , tgu.USER_PASSWORD
+             , tgu.USER_NAME
+             , tgu.USER_PHONE_NUMBER
+             , tgu.USER_ADDRESS
+             , ta.AUTHORITY_CODE
+        FROM
+            gss.TB_GSS_USER tgu
+                LEFT JOIN gss.GRANTED_AUTHORITY ga
+                          ON ga.USER_ID  = tgu.USER_ID
+                LEFT JOIN gss.TB_AUTHORITY ta
+                          on ta.AUTHORITY_ID = ga.AUTHORITY_ID
+        WHERE
+            tgu.USER_ID = #{userId}
+    </select>
+
+    <insert id = "insertUserInfo" parameterType="com.hgb.gssbe.login.model.UserInfo">
+        INSERT INTO gss.TB_GSS_USER(
+            USER_ID,
+            USER_PASSWORD,
+            USER_NAME,
+            USER_PHONE_NUMBER,
+            USER_ADDRESS,
+            USER_EMAIL,
+            CREATE_DATE,
+            CREATE_USER_ID,
+            UPDATE_DATE,
+            UPDATE_USER_ID
+        )
+        VALUES (
+                   #{userId},
+                   #{bCryptPassword},
+                   #{userName},
+                   #{userPhoneNumber},
+                   #{userAddress},
+                   #{userEmail},
+                   NOW(),
+                   NOW(),
+                   NOW(),
+                   NOW()
+               )
+    </insert>
+
+</mapper>

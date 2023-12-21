@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:log4jdbc:postgresql://localhost:5432/gss
-    username: postgres
-    password: root
+    url: jdbc:log4jdbc:mysql://hgbgrq.iptime.org:3306/gss
+    username: root
+    password: 3826
     driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
 
 server:
@@ -37,5 +37,5 @@ logging:
 jwt:
   header: Authorization
   #HS512 알고리즘을 사용할 것이기 때문에 512bit, 즉 64byte 이상의 secret key를 사용해야 한다.
-  secret: a2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbQ==
+  secret: a2FyadD102thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXqtQ8FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rQWEpbXRva2FyaW10b2thcmltdG9rYXJpbQ==
   token-validity-in-seconds: 86400 # ttl (초)

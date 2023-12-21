@@ -22,6 +22,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -46,6 +50,7 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests()
                 .requestMatchers("/api/login").permitAll()
+                .requestMatchers("/api/sign-up").permitAll()
                 .and()
                 .addFilterBefore(new JwtFilter(tokenProvider) , UsernamePasswordAuthenticationFilter.class);
 
@@ -60,6 +65,5 @@ public class SecurityConfig {
     private void setAuthorizeHttpRequests(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests().requestMatchers("/api/test2").hasRole("USER2");
     }
-
 
 }
