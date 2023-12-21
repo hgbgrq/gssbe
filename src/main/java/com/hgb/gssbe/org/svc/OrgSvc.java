@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -33,7 +34,8 @@ public class OrgSvc {
         if (orgDao.selectOrgCountByName(org.getOrgName()) > 0){
             throw new GssException("registered-org-name");
         }
-
+        String orgId = UUID.randomUUID().toString();
+        org.setOrgId(orgId);
         orgDao.createOrg(org);
     }
 

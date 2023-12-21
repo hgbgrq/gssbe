@@ -63,7 +63,7 @@
              , TOF.FILE_NAME AS ORD_FILE_NAME
              , TP.PRODUCT_ID AS PRD_ID
              , TP.PRODUCT_STYLE_NO AS PRD_STYLE_NO
-             , TP.PRODUCT_ITEM AS PRD_TIEM
+             , TP.PRODUCT_ITEM AS PRD_ITEM
              , TP.PRODUCT_SIZE AS PRD_SIZE
              , TP.PRODUCT_COLOR AS PRD_COLOR
              , TP.PRODUCT_QTY  AS PRD_QTY
@@ -74,7 +74,7 @@
             LEFT JOIN TB_PRODUCT TP
                 ON TP.ORDER_ID = TOR.ORDER_ID
             LEFT JOIN TB_ORGANIZATION ORG
-                ON ORG.ORG_ID = TOR.ORDER_ID
+                ON ORG.ORG_ID = TOR.ORDER_ORG_ID
             LEFT JOIN TB_FILE TOF
                 ON TOF.FILE_ID = TOR.FILE_ID
         WHERE

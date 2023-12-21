@@ -64,7 +64,8 @@
     <insert id="createOrg" parameterType="com.hgb.gssbe.org.model.Org">
         INSERT INTO gss.TB_ORGANIZATION
             (
-                ORG_NAME
+                ORG_ID
+                , ORG_NAME
                 , ORG_ADDRESS
                 , ORG_NUMBER
                 , ORG_PAX_NUMBER
@@ -80,7 +81,8 @@
             )
         VALUES
             (
-                #{orgName}
+             #{orgId}
+            , #{orgName}
             , #{orgAddress}
             , #{orgNumber}
             , #{orgPaxNumber}

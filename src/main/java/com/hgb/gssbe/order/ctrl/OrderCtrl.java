@@ -1,10 +1,7 @@
 package com.hgb.gssbe.order.ctrl;
 
 
-import com.hgb.gssbe.order.model.OrderEnrollReq;
-import com.hgb.gssbe.order.model.OrderReq;
-import com.hgb.gssbe.order.model.Order;
-import com.hgb.gssbe.order.model.OrderResList;
+import com.hgb.gssbe.order.model.*;
 import com.hgb.gssbe.order.svc.OrderSvc;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,16 +34,18 @@ public class OrderCtrl {
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 
+    @Operation(summary = "발주 상새 조회")
     @GetMapping("/{ordId}")
     public ResponseEntity<Order> getOrderDetail(@PathVariable String ordId){
         Order result = orderSvc.selectOrderDetail(ordId);
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 
+    @Operation(summary = "발주 등록")
     @PostMapping
-    public ResponseEntity<Void> enrollOrder(@RequestBody List<OrderEnrollReq> orderEnrollReqs){
-        orderSvc.insertOrderInfo(orderEnrollReqs);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<String> enrollOrder(@RequestBody OrderEnrollInfoReq orderEnrollInfoReq){
+        String orderId = orderSvc.enrollOrder(orderEnrollInfoReq);
+        return new ResponseEntity<>(orderId,HttpStatus.OK);
     }
 
     @PostMapping("/modify")
@@ -55,13 +54,9 @@ public class OrderCtrl {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/ordering")
-    public ResponseEntity<String> ordering(@RequestBody Order order){
-        return new ResponseEntity<>("fileId",HttpStatus.OK);
-    }
 
-    @GetMapping("/downloadExcel/{fileId}")
-    public void downloadOrder(HttpServletResponse response , @PathVariable String fileId){
-
+    @GetMapping("/downloadExcel/{orderId}")
+    public void downloadOrder(HttpServletResponse response , @PathVariable String orderId){
+        orderSvc.downloadOrder(response, orderId);
     }
 }

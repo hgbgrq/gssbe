@@ -47,16 +47,16 @@ public class SecurityConfig {
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authorizeHttpRequests()
-                .requestMatchers("/api/login").permitAll()
-                .requestMatchers("/api/sign-up").permitAll()
+//                .and()
+//                .authorizeHttpRequests()
+//                .requestMatchers("/api/login").permitAll()
+//                .requestMatchers("/api/sign-up").permitAll()
                 .and()
                 .addFilterBefore(new JwtFilter(tokenProvider) , UsernamePasswordAuthenticationFilter.class);
 
-        setAuthorizeHttpRequests(httpSecurity);
+//        setAuthorizeHttpRequests(httpSecurity);
 
-        httpSecurity.authorizeHttpRequests().anyRequest().authenticated();
+//        httpSecurity.authorizeHttpRequests().anyRequest().authenticated();
 
         return httpSecurity.build();
 
