@@ -14,6 +14,7 @@ public class Order {
     private String ordFileId;
     private String ordDeadLineDate;
     private String ordFileName;
+    private String ordName;
     private List<OrderProductModel> list;
 
 }

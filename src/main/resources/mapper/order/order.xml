@@ -4,6 +4,7 @@
 
     <resultMap id="orderDetailMap" type="com.hgb.gssbe.order.model.Order">
         <result column="ORD_ID" property="orderId" javaType="string"/>
+        <result column="ORD_NAME" property="ordName" javaType="string"/>
         <result column="ORG_ID" property="orgId" javaType="string"/>
         <result column="ORG_NAME" property="orgName" javaType="string"/>
         <result column="ORD_ORDERING_DATE" property="ordOrderingDate" javaType="string"/>
@@ -36,10 +37,11 @@
             , TOR.ORDER_ORDERING_DATE AS ORD_ORDERING_DATE
             , TOR.ORDER_ORG_ID AS ORG_ID
             , ORG.ORG_NAME  AS ORG_NAME
+            , TOR.ORDER_NAME
         FROM
             TB_ORDER TOR
             LEFT JOIN TB_ORGANIZATION ORG
-                ON ORG.ORG_ID = TOR.ORDER_ID
+                ON ORG.ORG_ID = TOR.ORDER_ORG_ID
     </select>
 
     <select id ="selectOrdersCount" resultType="java.lang.Integer"
@@ -55,6 +57,7 @@
     <select id ="selectDetailOrder" parameterType="java.lang.String" resultMap="orderDetailMap">
         SELECT
             TOR.ORDER_ID AS ORD_ID
+             , TOR.ORDER_NAME AS ORD_NAME
              , TOR.ORDER_ORG_ID AS ORG_ID
              , ORG.ORG_NAME  AS ORG_NAME
              , TOR.ORDER_ORDERING_DATE AS ORD_ORDERING_DATE
@@ -81,7 +84,7 @@
             TOR.ORDER_ID = #{ordId}
     </select>
 
-    <insert id="insertOrder" parameterType="com.hgb.gssbe.order.model.OrderModel">
+    <insert id="insertOrdering" parameterType="com.hgb.gssbe.order.model.OrderModel">
         INSERT INTO TB_ORDER(
                 ORDER_ID
                 , FILE_ID
@@ -90,7 +93,8 @@
                 , ORDER_ORDERING_DATE
                 , ORDER_DEAD_LINE_DATE
                 , ORDER_CREATE_DATE
-                , order_create_user_id)
+                , ORDER_CREATE_USER_ID
+                , ORDER_NAME)
         VALUES (
                    #{ordId}
                    , #{fileId}
@@ -100,6 +104,7 @@
                    , #{deadLineDate}
                    , NOW()
                    , 'ADMIN'
+                   , #{orderName}
                )
     </insert>
 

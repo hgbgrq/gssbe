@@ -13,6 +13,7 @@ public class OrderModel {
     private String ordOrderingDate;
     private String deadLineDate;
     private String fileId;
+    private String orderName;
 
     public String toStringJson() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);

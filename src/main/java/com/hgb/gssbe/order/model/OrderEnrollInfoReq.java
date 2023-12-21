@@ -15,6 +15,8 @@ public class OrderEnrollInfoReq {
 
     private String deadLineDate;
 
+    private String orderName;
+
     private List<OrderEnrollProductReq> productList;
 
     public String toStringJson() {

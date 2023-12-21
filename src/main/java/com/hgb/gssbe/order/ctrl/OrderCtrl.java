@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/order")
+@RequestMapping("/api/order")
 @Tag(name = "발주")
 public class OrderCtrl {
 

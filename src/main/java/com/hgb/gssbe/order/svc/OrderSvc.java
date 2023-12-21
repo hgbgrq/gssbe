@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.UUID;
 
@@ -57,7 +58,7 @@ public class OrderSvc {
                 orderModel.setOrdId(ordId);
                 orderModel.setOrgId(order.getOrgId());
                 orderModel.setDeadLineDate(order.getDeadLineDate());
-                orderDao.insertOrder(orderModel);
+                orderDao.insertOrdering(orderModel);
 
                 List<OrderEnrollProductReq> products = order.getProductList();
                 for(OrderEnrollProductReq product: products){
@@ -81,7 +82,6 @@ public class OrderSvc {
     }
 
 
-
     public String enrollOrder(OrderEnrollInfoReq order){
         OrderModel orderModel = new OrderModel();
         String ordId = UUID.randomUUID().toString();
@@ -90,7 +90,8 @@ public class OrderSvc {
         orderModel.setOrgId(order.getOrgId());
         orderModel.setDeadLineDate(order.getDeadLineDate());
         orderModel.setFileId("new");
-        orderDao.insertOrder(orderModel);
+        orderModel.setOrderName(order.getOrderName());
+        orderDao.insertOrdering(orderModel);
         List<OrderEnrollProductReq> products = order.getProductList();
         for(OrderEnrollProductReq product: products){
             OrderProductModel orderProductModel = new OrderProductModel();
@@ -207,7 +208,8 @@ public class OrderSvc {
 
             }
 
-            httpServletResponse.setHeader("Content-Disposition", "attachment;filename=" + order.getOrderId() + ".xlsx");
+            httpServletResponse.setContentType("application/vnd.msexcel;");
+            httpServletResponse.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(order.getOrdName(), "UTF-8") + ".xlsx");
             OutputStream out = httpServletResponse.getOutputStream();
             workbook.write(out);
         } catch (Exception e){

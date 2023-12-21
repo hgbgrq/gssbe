@@ -19,7 +19,7 @@ public interface OrderDao {
 
     Order selectDetailOrder(String ordId);
 
-    void insertOrder(OrderModel orderModel);
+    void insertOrdering(OrderModel orderModel);
 
     void insertOrderProduct(OrderProductModel orderProductModel);
 

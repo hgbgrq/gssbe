@@ -7,9 +7,11 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @Data
 public class OrderReq {
 
-    private String keyword;
+    private String orgId;
 
-    private String keywordType;
+    private String startDate;
+
+    private String endDate;
 
     public String toStringJson() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
