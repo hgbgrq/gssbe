@@ -43,9 +43,11 @@ public class OrderCtrl {
 
     @Operation(summary = "발주 등록")
     @PostMapping
-    public ResponseEntity<String> enrollOrder(@RequestBody OrderEnrollInfoReq orderEnrollInfoReq){
+    public ResponseEntity<OrderEnrollInfoRes> enrollOrder(@RequestBody OrderEnrollInfoReq orderEnrollInfoReq){
         String orderId = orderSvc.enrollOrder(orderEnrollInfoReq);
-        return new ResponseEntity<>(orderId,HttpStatus.OK);
+        OrderEnrollInfoRes res = new OrderEnrollInfoRes();
+        res.setOrderId(orderId);
+        return new ResponseEntity<>(res,HttpStatus.OK);
     }
 
     @PostMapping("/modify")
