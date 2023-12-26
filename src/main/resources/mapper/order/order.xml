@@ -3,45 +3,37 @@
 <mapper namespace = "com.hgb.gssbe.order.dao.OrderDao">
 
     <resultMap id="orderDetailMap" type="com.hgb.gssbe.order.model.Order">
-        <result column="ORD_ID" property="orderId" javaType="string"/>
-        <result column="ORD_NAME" property="ordName" javaType="string"/>
-        <result column="ORG_ID" property="orgId" javaType="string"/>
+        <result column="ORDER_ID" property="orderId" javaType="string"/>
+        <result column="ORDER_ORG_ID" property="orgId" javaType="string"/>
         <result column="ORG_NAME" property="orgName" javaType="string"/>
-        <result column="ORD_ORDERING_DATE" property="ordOrderingDate" javaType="string"/>
-        <result column="ORD_FILE_ID" property="ordFileId" javaType="string"/>
-        <result column="ORD_FILE_NAME" property="ordFileName" javaType="string"/>
-        <result column="ORD_DEAD_LINE_DATE" property="ordDeadLineDate" javaType="string"/>
-        <collection property="list" ofType="com.hgb.gssbe.order.model.OrderProductModel">
-            <result column="PRD_ID" property="prdId" javaType="string"/>
-            <result column="PRD_STYLE_NO" property="prdStyleNo" javaType="string"/>
-            <result column="PRD_ITEM" property="prdItem" javaType="string"/>
-            <result column="PRD_SIZE" property="prdSize" javaType="string"/>
-            <result column="PRD_COLOR" property="prdColor" javaType="string"/>
-            <result column="PRD_QTY" property="prdQty" javaType="string"/>
-            <result column="PRD_PRC" property="prdPrc" javaType="string"/>
-            <result column="PRD_ETC" property="prdEtc" javaType="string"/>
+        <result column="ORDER_ORDERING_DATE" property="orderOrderingDate" javaType="string"/>
+        <result column="ORDER_DEAD_LINE_DATE" property="orderDeadLineDate" javaType="string"/>
+        <collection property="productList" ofType="com.hgb.gssbe.order.model.OrderProduct">
+            <result column="PRODUCT_ID" property="productId" javaType="string"/>
+            <result column="PRODUCT_STYLE_NO" property="productStyleNo" javaType="string"/>
+            <result column="PRODUCT_ITEM" property="productItem" javaType="string"/>
+            <result column="PRODUCT_SIZE" property="productSize" javaType="string"/>
+            <result column="PRODUCT_COLOR" property="productColor" javaType="string"/>
+            <result column="PRODUCT_QTY" property="productQty" javaType="string"/>
+            <result column="PRODUCT_PRICE" property="productPrice" javaType="string"/>
+            <result column="PRODUCT_ETC" property="productEtc" javaType="string"/>
         </collection>
     </resultMap>
 
-    <select id = "test" resultType="java.lang.String">
-        SELECT
-            ORDER_ID
-        FROM
-            TB_ORDER
-    </select>
-
-    <select id = "selectOrders" resultType="com.hgb.gssbe.order.model.OrderModel"
+    <select id = "selectOrders" resultType="com.hgb.gssbe.order.model.OrderRes"
             parameterType="com.hgb.gssbe.order.model.OrderReq">
         SELECT
-            TOR.ORDER_ID AS ORD_ID
-            , TOR.ORDER_ORDERING_DATE AS ORD_ORDERING_DATE
-            , TOR.ORDER_ORG_ID AS ORG_ID
-            , ORG.ORG_NAME  AS ORG_NAME
-            , TOR.ORDER_NAME
+            TOR.ORDER_ID
+            , TOR.ORDER_ORDERING_DATE
+            , TON.ORG_NAME
+            , GROUP_CONCAT(DISTINCT TPT.PRODUCT_STYLE_NO ORDER BY TPT.PRODUCT_STYLE_NO SEPARATOR ', ') ORD_STYLE_NOS
         FROM
             TB_ORDER TOR
-            LEFT JOIN TB_ORGANIZATION ORG
-                ON ORG.ORG_ID = TOR.ORDER_ORG_ID
+                LEFT JOIN TB_PRODUCT TPT
+                          ON TOR.ORDER_ID  = TPT.ORDER_ID
+                LEFT JOIN TB_ORGANIZATION TON
+                          ON TON.ORG_ID = TOR.ORDER_ORG_ID
+        GROUP BY TOR.ORDER_ID , TOR.ORDER_ORDERING_DATE , TON.ORG_NAME
     </select>
 
     <select id ="selectOrdersCount" resultType="java.lang.Integer"
@@ -50,65 +42,55 @@
             COUNT(TOR.ORDER_ID)
         FROM
             TB_ORDER TOR
-            LEFT JOIN TB_ORGANIZATION ORG
-                ON ORG.ORG_ID = TOR.ORDER_ID
     </select>
 
     <select id ="selectDetailOrder" parameterType="java.lang.String" resultMap="orderDetailMap">
         SELECT
-            TOR.ORDER_ID AS ORD_ID
-             , TOR.ORDER_NAME AS ORD_NAME
-             , TOR.ORDER_ORG_ID AS ORG_ID
-             , ORG.ORG_NAME  AS ORG_NAME
-             , TOR.ORDER_ORDERING_DATE AS ORD_ORDERING_DATE
-             , TOR.ORDER_DEAD_LINE_DATE AS ORD_DEAD_LINE_DATE
-             , TOR.FILE_ID AS ORD_FILE_ID
-             , TOF.FILE_NAME AS ORD_FILE_NAME
-             , TP.PRODUCT_ID AS PRD_ID
-             , TP.PRODUCT_STYLE_NO AS PRD_STYLE_NO
-             , TP.PRODUCT_ITEM AS PRD_ITEM
-             , TP.PRODUCT_SIZE AS PRD_SIZE
-             , TP.PRODUCT_COLOR AS PRD_COLOR
-             , TP.PRODUCT_QTY  AS PRD_QTY
-             , TP.PRODUCT_PRICE AS PRD_PRC
-             , TP.PRODUCT_ETC AS PRD_ETC
+            TOR.ORDER_ID
+             , TOR.ORDER_NAME
+             , TOR.ORDER_ORG_ID
+             , ORG.ORG_NAME
+             , TOR.ORDER_ORDERING_DATE
+             , TOR.ORDER_DEAD_LINE_DATE
+             , TP.PRODUCT_ID
+             , TP.PRODUCT_STYLE_NO
+             , TP.PRODUCT_ITEM
+             , TP.PRODUCT_SIZE
+             , TP.PRODUCT_COLOR
+             , TP.PRODUCT_QTY
+             , TP.PRODUCT_PRICE
+             , TP.PRODUCT_ETC
         FROM
             TB_ORDER TOR
             LEFT JOIN TB_PRODUCT TP
                 ON TP.ORDER_ID = TOR.ORDER_ID
             LEFT JOIN TB_ORGANIZATION ORG
                 ON ORG.ORG_ID = TOR.ORDER_ORG_ID
-            LEFT JOIN TB_FILE TOF
-                ON TOF.FILE_ID = TOR.FILE_ID
         WHERE
-            TOR.ORDER_ID = #{ordId}
+            TOR.ORDER_ID = #{orderId}
     </select>
 
-    <insert id="insertOrdering" parameterType="com.hgb.gssbe.order.model.OrderModel">
+    <insert id="insertOrdering" parameterType="com.hgb.gssbe.order.model.Order">
         INSERT INTO TB_ORDER(
                 ORDER_ID
-                , FILE_ID
                 , ORDER_ORG_ID
-                , ORDER_USE_YN
+                , USE_YN
                 , ORDER_ORDERING_DATE
                 , ORDER_DEAD_LINE_DATE
-                , ORDER_CREATE_DATE
-                , ORDER_CREATE_USER_ID
-                , ORDER_NAME)
+                , CREATE_DATE
+                , CREATE_USER_ID )
         VALUES (
-                   #{ordId}
-                   , #{fileId}
+                   #{orderId}
                    , #{orgId}
                    , 'Y'
                    , #{ordOrderingDate}
                    , #{deadLineDate}
                    , NOW()
-                   , 'ADMIN'
-                   , #{orderName}
+                   , #{createUserId}
                )
     </insert>
 
-    <insert id="insertOrderProduct" parameterType="com.hgb.gssbe.order.model.OrderProductModel">
+    <insert id="insertOrderProduct" parameterType="com.hgb.gssbe.order.model.OrderProduct">
         INSERT INTO TB_PRODUCT(
                 PRODUCT_ID
                 , ORDER_ID
@@ -119,28 +101,23 @@
                 , PRODUCT_QTY
                 , PRODUCT_PRICE
                 , PRODUCT_ETC
-                , PRODUCT_USE_YN
-                , PRODUCT_CREATE_DATE
-                , PRODUCT_CREATE_USER_ID
+                , USE_YN
+                , CREATE_DATE
+                , CREATE_USER_ID
         )VALUES (
-                 #{prdId}
-                 , #{ordId}
-                 , #{prdStyleNo}
-                 , #{prdItem}
-                 , #{prdSize}
-                 , #{prdColor}
-                 , #{prdQty}
-                 , #{prdPrc}
-                 , #{prdEtc}
+                 #{productId}
+                 , #{orderId}
+                 , #{productStyleNo}
+                 , #{productItem}
+                 , #{productSize}
+                 , #{productColor}
+                 , #{productQty}
+                 , #{productPrice}
+                 , #{productEtc}
                  , 'Y'
                  , NOW()
-                 , 'ADMIN'
+                 , #{createUserId}
                 )
     </insert>
 
-    <update id ="updateFileTmpYn" parameterType="java.lang.String">
-        UPDATE TB_FILE
-            SET TMP_YN = 'N'
-            WHERE FILE_ID = #{fileId}
-    </update>
 </mapper>

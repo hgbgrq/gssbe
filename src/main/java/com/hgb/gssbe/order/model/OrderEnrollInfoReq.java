@@ -9,13 +9,13 @@ import java.util.List;
 @Data
 public class OrderEnrollInfoReq {
 
+    private String orderId;
+
+    private String orderOrderingDate;
+
+    private String orderDeadLineDate;
+
     private String orgId;
-
-    private String orderingDate;
-
-    private String deadLineDate;
-
-    private String orderName;
 
     private List<OrderEnrollProductReq> productList;
 

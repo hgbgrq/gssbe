@@ -6,16 +6,13 @@ import com.hgb.gssbe.order.model.*;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.List;
@@ -34,84 +31,39 @@ public class OrderSvc {
 
     public OrderResList selectOrderList(OrderReq orderReq){
         OrderResList result = new OrderResList();
-        List<OrderModel> list = orderDao.selectOrders(orderReq);
+        List<OrderRes> list = orderDao.selectOrders(orderReq);
         Integer totalCount = orderDao.selectOrdersCount(orderReq);
         result.setList(list);
         result.setTotalCount(totalCount);
         return result;
     }
 
-    public Order selectOrderDetail(String orderId){
-        Order result = orderDao.selectDetailOrder(orderId);
-        return result;
-    }
-
-    public void insertOrderInfo(List<OrderEnrollReq> OrderEnrolls){
-        for(OrderEnrollReq dto : OrderEnrolls){
-            List<OrderEnrollInfoReq> orders  = dto.getList();
-
-            for(OrderEnrollInfoReq order : orders){
-                OrderModel orderModel = new OrderModel();
-                String ordId = UUID.randomUUID().toString();
-                orderModel.setFileId(dto.getFileId());
-                orderModel.setOrdOrderingDate(order.getOrderingDate());
-                orderModel.setOrdId(ordId);
-                orderModel.setOrgId(order.getOrgId());
-                orderModel.setDeadLineDate(order.getDeadLineDate());
-                orderDao.insertOrdering(orderModel);
-
-                List<OrderEnrollProductReq> products = order.getProductList();
-                for(OrderEnrollProductReq product: products){
-                    OrderProductModel orderProductModel = new OrderProductModel();
-                    String prdId = UUID.randomUUID().toString();
-                    orderProductModel.setPrdId(prdId);
-                    orderProductModel.setOrdId(ordId);
-                    orderProductModel.setPrdStyleNo(product.getStyleNo());
-                    orderProductModel.setPrdItem(product.getItem());
-                    orderProductModel.setPrdSize(product.getSize());
-                    orderProductModel.setPrdColor(product.getColor());
-                    orderProductModel.setPrdQty(product.getQty());
-                    orderProductModel.setPrdPrc(product.getPrc());
-                    orderProductModel.setPrdEtc(product.getEtc());
-                    orderDao.insertOrderProduct(orderProductModel);
-                }
-
-            }
-            orderDao.updateFileTmpYn(dto.getFileId());
+    public String enrollOrder(OrderEnrollInfoReq orderEnrollInfoReq){
+        String orderId = UUID.randomUUID().toString();
+        for(OrderEnrollProductReq product: orderEnrollInfoReq.getProductList()){
+            String productId = UUID.randomUUID().toString();
+            OrderProduct orderProduct = OrderProduct.builder()
+                    .productId(productId)
+                    .orderId(orderId)
+                    .productStyleNo(product.getProductStyleNo())
+                    .productColor(product.getProductColor())
+                    .productItem(product.getProductItem())
+                    .productSize(product.getProductSize())
+                    .productQty(product.getProductQty())
+                    .productEtc(product.getProductEtc()).build();
+            orderDao.insertOrderProduct(orderProduct);
         }
-    }
 
+        Order order = Order.builder()
+                .orderId(orderId)
+                .orderOrderingDate(orderEnrollInfoReq.getOrderOrderingDate())
+                .orderDeadLineDate(orderEnrollInfoReq.getOrderDeadLineDate())
+                .orgId(orderEnrollInfoReq.getOrgId())
+                .build();
 
-    public String enrollOrder(OrderEnrollInfoReq order){
-        OrderModel orderModel = new OrderModel();
-        String ordId = UUID.randomUUID().toString();
-        orderModel.setOrdOrderingDate(order.getOrderingDate());
-        orderModel.setOrdId(ordId);
-        orderModel.setOrgId(order.getOrgId());
-        orderModel.setDeadLineDate(order.getDeadLineDate());
-        orderModel.setFileId("new");
-        orderModel.setOrderName(order.getOrderName());
-        orderDao.insertOrdering(orderModel);
-        List<OrderEnrollProductReq> products = order.getProductList();
-        for(OrderEnrollProductReq product: products){
-            OrderProductModel orderProductModel = new OrderProductModel();
-            String prdId = UUID.randomUUID().toString();
-            orderProductModel.setPrdId(prdId);
-            orderProductModel.setOrdId(ordId);
-            orderProductModel.setPrdStyleNo(product.getStyleNo());
-            orderProductModel.setPrdItem(product.getItem());
-            orderProductModel.setPrdSize(product.getSize());
-            orderProductModel.setPrdColor(product.getColor());
-            orderProductModel.setPrdQty(product.getQty());
-            orderProductModel.setPrdPrc(product.getPrc());
-            orderProductModel.setPrdEtc(product.getEtc());
-            orderDao.insertOrderProduct(orderProductModel);
-        }
-        return ordId;
-    }
+        orderDao.insertOrdering(order);
 
-    public void modifyOrder(Order order){
-        orderDao.modifyOrder(order);
+        return orderId;
     }
 
     public void downloadOrder(HttpServletResponse response , String orderId){
@@ -158,58 +110,52 @@ public class OrderSvc {
             // 발주 날짜
             row = sheet.getRow(Excel.ORDERING_DATE.getRow());
             Cell dateCell = row.createCell(Excel.ORDERING_DATE.getCell());
-            dateCell.setCellValue(order.getOrdOrderingDate());
+            dateCell.setCellValue(order.getOrderOrderingDate());
             dateCell.setCellStyle(upCellStyle);
 
             //발주 기한
             row = sheet.getRow(Excel.DEAD_LINE_DATE.getRow());
             Cell deadLineCell = row.createCell(Excel.DEAD_LINE_DATE.getCell());
-            deadLineCell.setCellValue(order.getOrdDeadLineDate());
+            deadLineCell.setCellValue(order.getOrderDeadLineDate());
             deadLineCell.setCellStyle(upCellStyle);
 
             //발주 목록 시작 row수
             int rowCount = Excel.PRD_START_ROW.getRow();
-            OrderProductModel preOrderProductModel = new OrderProductModel();
+            String excelName = "";
 
-            for (OrderProductModel orderProduct : order.getList()){
+            for (OrderProduct orderProduct : order.getProductList()){
                 row = sheet.getRow(rowCount);
 
                 Cell styleCell = row.createCell(Excel.STYLE_NO.getCell());
-                styleCell.setCellValue(orderProduct.getPrdStyleNo());
+                styleCell.setCellValue(orderProduct.getProductStyleNo());
                 styleCell.setCellStyle(prdCellStyle);
+                excelName += String.format(", %s",orderProduct.getProductStyleNo());
 
                 Cell itemCell = row.createCell(Excel.ITEM.getCell());
-                itemCell.setCellValue(orderProduct.getPrdItem());
+                itemCell.setCellValue(orderProduct.getProductItem());
                 itemCell.setCellStyle(prdCellStyle);
 
                 Cell sizeCell = row.createCell(Excel.SIZE.getCell());
-                sizeCell.setCellValue(orderProduct.getPrdSize());
+                sizeCell.setCellValue(orderProduct.getProductSize());
                 sizeCell.setCellStyle(prdCellStyle);
 
                 Cell colorCell = row.createCell(Excel.COLOR.getCell());
-                colorCell.setCellValue(orderProduct.getPrdColor());
+                colorCell.setCellValue(orderProduct.getProductColor());
                 colorCell.setCellStyle(prdCellStyle);
 
                 Cell qtyCell = row.createCell(Excel.QTY.getCell());
-                qtyCell.setCellValue(orderProduct.getPrdQty());
+                qtyCell.setCellValue(orderProduct.getProductQty());
                 qtyCell.setCellStyle(prdCellStyle);
 
                 Cell etcCell = row.createCell(Excel.ETC.getCell());
-                etcCell.setCellValue(orderProduct.getPrdEtc());
+                etcCell.setCellValue(orderProduct.getProductEtc());
                 etcCell.setCellStyle(prdCellStyle);
 
-//                if (preOrderProductModel.getPrdStyleNo().equals(orderProduct.getPrdStyleNo())){
-//                    sheet.addMergedRegion(new CellRangeAddress(rowCount - 1,rowCount , Excel.STYLE_NO.getCell() ,Excel.STYLE_NO.getCell()));
-//                }
-
-
                 rowCount++;
-                preOrderProductModel = orderProduct;
-
             }
 
             httpServletResponse.setContentType("application/vnd.msexcel;");
-            httpServletResponse.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(order.getOrdName(), "UTF-8") + ".xlsx");
+            httpServletResponse.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(excelName, "UTF-8") + ".xlsx");
             OutputStream out = httpServletResponse.getOutputStream();
             workbook.write(out);
         } catch (Exception e){

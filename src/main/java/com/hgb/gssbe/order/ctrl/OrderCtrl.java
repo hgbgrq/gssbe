@@ -22,10 +22,6 @@ public class OrderCtrl {
 
     @Autowired
     private OrderSvc orderSvc;
-    @GetMapping("/test")
-    public ResponseEntity<String> test(){
-        return new ResponseEntity<>(orderSvc.test(),HttpStatus.OK);
-    }
 
     @Operation(summary = "발주 조회")
     @GetMapping
@@ -34,12 +30,6 @@ public class OrderCtrl {
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 
-    @Operation(summary = "발주 상새 조회")
-    @GetMapping("/{ordId}")
-    public ResponseEntity<Order> getOrderDetail(@PathVariable String ordId){
-        Order result = orderSvc.selectOrderDetail(ordId);
-        return new ResponseEntity<>(result,HttpStatus.OK);
-    }
 
     @Operation(summary = "발주 등록")
     @PostMapping
@@ -50,13 +40,8 @@ public class OrderCtrl {
         return new ResponseEntity<>(res,HttpStatus.OK);
     }
 
-    @PostMapping("/modify")
-    public ResponseEntity<Void> modifyOrder(Order order){
-        orderSvc.modifyOrder(order);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
 
-
+    @Operation(summary = "발주서 다운로드")
     @GetMapping("/downloadExcel/{orderId}")
     public void downloadOrder(HttpServletResponse response , @PathVariable String orderId){
         orderSvc.downloadOrder(response, orderId);

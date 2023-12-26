@@ -11,7 +11,7 @@ public class OrderResList {
 
     private Integer totalCount;
 
-    private List<OrderModel> list;
+    private List<OrderRes> list;
 
 
     public String toStringJson() {

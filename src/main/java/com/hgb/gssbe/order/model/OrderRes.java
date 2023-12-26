@@ -4,17 +4,15 @@ import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import java.util.List;
-
 @Data
-public class OrderEnrollReq {
+public class OrderRes {
 
-    private String fileId;
-
-    List<OrderEnrollInfoReq> list;
+    private String orderId;
+    private String orgName;
+    private String orderOrderingDate;
+    private String orderStyleNos;
 
     public String toStringJson() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
     }
-
 }
