@@ -59,4 +59,4 @@ jobs:
           script: |
             cd /gss/BackEnd/jar/build
             docker build -t gss_server ./
-            docker run --rm -p 9000:9000 --name gss_server gss_server
+            docker run -d -i -p 9000:9000 --name gss_server gss_server
