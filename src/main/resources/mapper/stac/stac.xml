@@ -2,68 +2,39 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace = "com.hgb.gssbe.stac.dao.StacDao">
 
-    <resultMap id="stacMap" type="com.hgb.gssbe.stac.model.Stac">
-        <result column="ORDER_MONTH" property="orderMonth" javaType="string"/>
-        <collection property="productList" ofType="com.hgb.gssbe.stac.model.StacProduct">
-            <result column="PRODUCT_ID" property="productId" javaType="string"/>
-            <result column="PRODUCT_STYLE_NO" property="prdStyleNo" javaType="string"/>
-            <result column="PRODUCT_ITEM" property="prdItem" javaType="string"/>
-            <result column="PRODUCT_SIZE" property="prdSize" javaType="string"/>
-            <result column="PRODUCT_COLOR" property="prdColor" javaType="string"/>
-            <result column="PRODUCT_QTY" property="prdQty" javaType="Integer"/>
-            <result column="PRODUCT_PRICE" property="prdPrc" javaType="Integer"/>
-            <result column="PRODUCT_ETC" property="prdEtc" javaType="string"/>
-            <result column="IS_PAYMENT" property="isPayment" javaType="string"/>
-            <result column="PAYMENT_DATE" property="paymentDate" javaType="string"/>
-            <result column="ORDER_ORG_ID" property="orgId" javaType="string"/>
-            <result column="ORG_NAME" property="orgName" javaType="string"/>
-            <result column="TOTAL_PRD_PRC" property="totalPrdPrc" javaType="Integer"/>
-        </collection>
-    </resultMap>
-
-    <select id="selectStacList" parameterType="com.hgb.gssbe.stac.model.StacReq" resultMap="stacMap">
+    <select id="selectStacProductList" parameterType="com.hgb.gssbe.stac.model.StacReq" resultType="com.hgb.gssbe.stac.model.StacProduct">
         SELECT
-            TO_CHAR(TOR.ORDER_ORDERING_DATE, 'MM월') ORDER_MONTH
+            TOR.ORDER_ID
+             , TOR.ORDER_ORDERING_DATE
              , TP.PRODUCT_ID
              , TP.PRODUCT_STYLE_NO
              , TP.PRODUCT_ITEM
              , TP.PRODUCT_SIZE
              , TP.PRODUCT_COLOR
-             , TP.PRODUCT_QTY ::DECIMAL
-             , TP.PRODUCT_PRICE ::DECIMAL
-             , CAST(COALESCE((TP.PRODUCT_PRICE ::DECIMAL * TP.PRODUCT_QTY ::DECIMAL) , 0) AS INTEGER) TOTAL_PRD_PRC
+             , TP.PRODUCT_QTY
+             , TP.PRODUCT_PRICE
              , TP.PRODUCT_ETC
-             , TP.IS_PAYMENT
-             , TP.PAYMENT_DATE
-             , TOR.ORDER_ORG_ID
-             , TOG.ORG_NAME
+             , cast(TP.PRODUCT_PRICE as unsigned) * cast(TP.PRODUCT_QTY as unsigned) TOTAL_PRD_PRC
         FROM
-            GSS.TB_PRODUCT TP
-                LEFT JOIN GSS.TB_ORDER TOR
+            TB_PRODUCT TP
+                LEFT JOIN TB_ORDER TOR
                           ON TOR.ORDER_ID = TP.ORDER_ID
-                LEFT JOIN GSS.TB_ORGANIZATION TOG
-                          ON TOG.ORG_ID = TOR.ORDER_ORG_ID
         WHERE
             1=1
-            AND
+          AND
             TP.USE_YN = 'Y'
-        <if test ='orgIdList != null and orgIdList.size > 0'>
-            AND
-            TOR.ORDER_ORG_ID IN
-          <foreach collection="orgIdList" item="ordId" open="(" close=")" separator=" , ">
-              #{ordId}
-          </foreach>
-        </if>
-        <if test ='startDate != null and startDate != ""'>
-            AND
-            TO_TIMESTAMP(TO_CHAR(TOR.ORDER_ORDERING_DATE,'YYYY-MM-DD'), 'YYYY-MM-DD') >= TO_TIMESTAMP(#{startDate},'YYYY-MM-DD')
-            AND
-            <![CDATA[TO_TIMESTAMP(TO_CHAR(TOR.ORDER_ORDERING_DATE,'YYYY-MM-DD'), 'YYYY-MM-DD') <= TO_TIMESTAMP(#{startDate}, 'YYYY-MM-DD')]]>
-        </if>
-        <if test ='isPayment != "ALL" and isPayment !="" and isPayment != null'>
-            AND
-            TP.IS_PAYMENT = #{isPayment}
-        </if>
-        ORDER BY ORDER_MONTH ASC, TOG.ORG_NAME
+          AND
+            TOR.ORDER_ORG_ID = #{orgId}
+        ORDER BY TOR.ORDER_ORDERING_DATE, TP.PRODUCT_STYLE_NO
+    </select>
+
+    <select id ="selectStacOrg" parameterType="com.hgb.gssbe.stac.model.StacReq" resultType="com.hgb.gssbe.stac.model.StacOrg">
+        select
+            TOG.ORG_ID
+             , TOG.ORG_NAME
+        from
+            TB_ORGANIZATION TOG
+        WHERE
+            TOG.ORG_ID  = #{orgId}
     </select>
 </mapper>

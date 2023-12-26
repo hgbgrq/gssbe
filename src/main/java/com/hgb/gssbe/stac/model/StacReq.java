@@ -7,12 +7,12 @@ import java.util.List;
 @Data
 public class StacReq {
 
-    private List<String> orgIdList;
+    private String orgId;
 
     private String startDate;
 
     private String endDate;
 
-    private String isPayment;
+    private String isStore;
 
 }

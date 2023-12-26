@@ -5,30 +5,26 @@ import lombok.Data;
 @Data
 public class StacProduct {
 
+    private String orderId;
+
     private String productId;
 
-    private String prdStyleNo;
+    private String productStyleNo;
 
-    private String prdItem;
+    private String productItem;
 
-    private String prdSize;
+    private String productSize;
 
-    private String prdColor;
+    private String productColor;
 
-    private Integer prdQty;
+    private Integer productQty;
 
-    private Integer prdPrc;
+    private Integer productPrice;
 
     private Integer totalPrdPrc;
 
-    private String prdEtc;
+    private String productEtc;
 
-    private String isPayment;
-
-    private String paymentDate;
-
-    private String orgId;
-
-    private String orgName;
+    private String orderOrderingDate;
 
 }

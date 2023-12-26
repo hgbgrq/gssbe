@@ -1,7 +1,6 @@
 package com.hgb.gssbe.stac.dao;
 
-import com.hgb.gssbe.stac.model.Stac;
-import com.hgb.gssbe.stac.model.StacReq;
+import com.hgb.gssbe.stac.model.*;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -9,5 +8,7 @@ import java.util.List;
 @Mapper
 public interface StacDao {
 
-    List<Stac> selectStacList(StacReq stacReq);
+    List<StacProduct> selectStacProductList(StacReq stacReq);
+
+    StacOrg selectStacOrg(StacReq stacReq);
 }
