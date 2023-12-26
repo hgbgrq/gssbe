@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/order")
 @Tag(name = "발주")
@@ -27,6 +29,7 @@ public class OrderCtrl {
     @GetMapping
     public ResponseEntity<OrderResList> getOrderList(OrderReq orderReq){
         OrderResList result = orderSvc.selectOrderList(orderReq);
+        log.info(result.toStringJson());
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 

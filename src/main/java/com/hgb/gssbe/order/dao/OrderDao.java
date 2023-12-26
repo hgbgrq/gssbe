@@ -14,13 +14,11 @@ public interface OrderDao {
 
     Integer selectOrdersCount(OrderReq orderReq);
 
-    Order selectDetailOrder(String ordId);
+    OrderDetail selectDetailOrder(String orderId);
 
     void insertOrdering(Order order);
 
     void insertOrderProduct(OrderProduct orderProduct);
-
-    void updateFileTmpYn(String fileId);
 
 
 }

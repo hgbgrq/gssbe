@@ -2,15 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace = "com.hgb.gssbe.order.dao.OrderDao">
 
-    <resultMap id="orderDetailMap" type="com.hgb.gssbe.order.model.Order">
+    <resultMap id="orderDetailMap" type="com.hgb.gssbe.order.model.OrderDetail">
         <result column="ORDER_ID" property="orderId" javaType="string"/>
         <result column="ORDER_ORG_ID" property="orgId" javaType="string"/>
         <result column="ORG_NAME" property="orgName" javaType="string"/>
         <result column="ORDER_ORDERING_DATE" property="orderOrderingDate" javaType="string"/>
         <result column="ORDER_DEAD_LINE_DATE" property="orderDeadLineDate" javaType="string"/>
-        <collection property="productList" ofType="com.hgb.gssbe.order.model.OrderProduct">
-            <result column="PRODUCT_ID" property="productId" javaType="string"/>
-            <result column="PRODUCT_STYLE_NO" property="productStyleNo" javaType="string"/>
+        <collection property="productList" ofType="com.hgb.gssbe.order.model.OrderProductRes">
+            <result column="PRODUCT_ID" property="productId"/>
+            <result column="PRODUCT_STYLE_NO" property="productStyleNo" />
             <result column="PRODUCT_ITEM" property="productItem" javaType="string"/>
             <result column="PRODUCT_SIZE" property="productSize" javaType="string"/>
             <result column="PRODUCT_COLOR" property="productColor" javaType="string"/>
@@ -26,7 +26,7 @@
             TOR.ORDER_ID
             , TOR.ORDER_ORDERING_DATE
             , TON.ORG_NAME
-            , GROUP_CONCAT(DISTINCT TPT.PRODUCT_STYLE_NO ORDER BY TPT.PRODUCT_STYLE_NO SEPARATOR ', ') ORD_STYLE_NOS
+            , GROUP_CONCAT(DISTINCT TPT.PRODUCT_STYLE_NO ORDER BY TPT.PRODUCT_STYLE_NO SEPARATOR ', ') ORDER_STYLE_NOS
         FROM
             TB_ORDER TOR
                 LEFT JOIN TB_PRODUCT TPT
@@ -46,26 +46,25 @@
 
     <select id ="selectDetailOrder" parameterType="java.lang.String" resultMap="orderDetailMap">
         SELECT
-            TOR.ORDER_ID
-             , TOR.ORDER_NAME
-             , TOR.ORDER_ORG_ID
-             , ORG.ORG_NAME
-             , TOR.ORDER_ORDERING_DATE
-             , TOR.ORDER_DEAD_LINE_DATE
-             , TP.PRODUCT_ID
-             , TP.PRODUCT_STYLE_NO
-             , TP.PRODUCT_ITEM
-             , TP.PRODUCT_SIZE
-             , TP.PRODUCT_COLOR
-             , TP.PRODUCT_QTY
-             , TP.PRODUCT_PRICE
-             , TP.PRODUCT_ETC
+            TOR.ORDER_ID ORDER_ID
+             , TOR.ORDER_ORG_ID ORDER_ORG_ID
+             , ORG.ORG_NAME ORG_NAME
+             , TOR.ORDER_ORDERING_DATE ORDER_ORDERING_DATE
+             , TOR.ORDER_DEAD_LINE_DATE ORDER_DEAD_LINE_DATE
+             , TP.PRODUCT_ID PRODUCT_ID
+             , TP.PRODUCT_STYLE_NO PRODUCT_STYLE_NO
+             , TP.PRODUCT_ITEM PRODUCT_ITEM
+             , TP.PRODUCT_SIZE PRODUCT_SIZE
+             , TP.PRODUCT_COLOR PRODUCT_COLOR
+             , TP.PRODUCT_QTY PRODUCT_QTY
+             , TP.PRODUCT_PRICE PRODUCT_PRICE
+             , TP.PRODUCT_ETC PRODUCT_ETC
         FROM
             TB_ORDER TOR
-            LEFT JOIN TB_PRODUCT TP
-                ON TP.ORDER_ID = TOR.ORDER_ID
-            LEFT JOIN TB_ORGANIZATION ORG
-                ON ORG.ORG_ID = TOR.ORDER_ORG_ID
+                LEFT JOIN TB_PRODUCT TP
+                          ON TP.ORDER_ID = TOR.ORDER_ID
+                LEFT JOIN TB_ORGANIZATION ORG
+                          ON ORG.ORG_ID = TOR.ORDER_ORG_ID
         WHERE
             TOR.ORDER_ID = #{orderId}
     </select>
@@ -83,8 +82,8 @@
                    #{orderId}
                    , #{orgId}
                    , 'Y'
-                   , #{ordOrderingDate}
-                   , #{deadLineDate}
+                   , #{orderOrderingDate}
+                   , #{orderDeadLineDate}
                    , NOW()
                    , #{createUserId}
                )

@@ -1,14 +1,11 @@
 package com.hgb.gssbe.order.model;
 
-import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
 
-@Builder
 @Data
-public class Order {
-
+public class OrderDetail {
     private String orderId;
     private String orgId;
     private String orgName;
@@ -16,5 +13,4 @@ public class Order {
     private String orderDeadLineDate;
     private String createUserId;
     private List<OrderProductRes> productList;
-
 }

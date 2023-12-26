@@ -67,11 +67,11 @@ public class OrderSvc {
     }
 
     public void downloadOrder(HttpServletResponse response , String orderId){
-        Order order = orderDao.selectDetailOrder(orderId);
+        OrderDetail order = orderDao.selectDetailOrder(orderId);
         makeOrder(order , response);
     }
 
-    private void makeOrder(Order order, HttpServletResponse httpServletResponse){
+    private void makeOrder(OrderDetail order, HttpServletResponse httpServletResponse){
 
         try {
             FileInputStream file = new FileInputStream("C:\\Users\\HGB\\Desktop\\hrm\\test.xlsx");
@@ -123,7 +123,7 @@ public class OrderSvc {
             int rowCount = Excel.PRD_START_ROW.getRow();
             String excelName = "";
 
-            for (OrderProduct orderProduct : order.getProductList()){
+            for (OrderProductRes orderProduct : order.getProductList()){
                 row = sheet.getRow(rowCount);
 
                 Cell styleCell = row.createCell(Excel.STYLE_NO.getCell());

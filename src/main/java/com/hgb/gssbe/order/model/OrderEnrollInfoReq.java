@@ -9,8 +9,6 @@ import java.util.List;
 @Data
 public class OrderEnrollInfoReq {
 
-    private String orderId;
-
     private String orderOrderingDate;
 
     private String orderDeadLineDate;
