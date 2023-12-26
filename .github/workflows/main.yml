@@ -56,4 +56,6 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.PORT }}
-          script: docker ps -a    
+          script:  
+          cd /gss/backEnd/jar/build 
+          docker build -t gss_server ./
