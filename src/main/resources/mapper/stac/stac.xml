@@ -2,19 +2,40 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace = "com.hgb.gssbe.stac.dao.StacDao">
 
-    <select id="selectStacProductList" parameterType="com.hgb.gssbe.stac.model.StacReq" resultType="com.hgb.gssbe.stac.model.StacProduct">
+    <resultMap id="readStac" type="com.hgb.gssbe.stac.model.StacMonth">
+        <result column="MONTH_PART" property="month" javaType="string"/>
+        <collection property="stacProductList" ofType="com.hgb.gssbe.stac.model.StacProduct">
+            <result column="ORDER_ID" property="orderId" javaType="string"/>
+            <result column="ORDER_ORDERING_DATE" property="orderOrderingDate" javaType="string"/>
+            <result column="PRODUCT_ID" property="productId" javaType="string"/>
+            <result column="PRODUCT_STYLE_NO" property="productStyleNo" javaType="string"/>
+            <result column="PRODUCT_ITEM" property="productItem" javaType="string"/>
+            <result column="PRODUCT_SIZE" property="productSize" javaType="string"/>
+            <result column="PRODUCT_COLOR" property="productColor" javaType="string"/>
+            <result column="PRODUCT_QTY" property="productQty" javaType="Integer"/>
+            <result column="PRODUCT_PRICE" property="productPrice" javaType="Integer"/>
+            <result column="PRODUCT_ETC" property="productEtc" javaType="string"/>
+            <result column="TOTAL_PRD_PRC" property="totalPrdPrc" javaType="Integer"/>
+        </collection>
+    </resultMap>
+
+
+
+    <select id="selectStacProductList" parameterType="com.hgb.gssbe.stac.model.StacReq"
+            resultMap="readStac">
         SELECT
-            TOR.ORDER_ID
-             , TOR.ORDER_ORDERING_DATE
-             , TP.PRODUCT_ID
-             , TP.PRODUCT_STYLE_NO
-             , TP.PRODUCT_ITEM
-             , TP.PRODUCT_SIZE
-             , TP.PRODUCT_COLOR
-             , TP.PRODUCT_QTY
-             , TP.PRODUCT_PRICE
-             , TP.PRODUCT_ETC
-             , cast(TP.PRODUCT_PRICE as unsigned) * cast(TP.PRODUCT_QTY as unsigned) TOTAL_PRD_PRC
+            DATE_FORMAT(ORDER_ORDERING_DATE,'%m월') MONTH_PART
+            , TOR.ORDER_ID
+            , TOR.ORDER_ORDERING_DATE
+            , TP.PRODUCT_ID
+            , TP.PRODUCT_STYLE_NO
+            , TP.PRODUCT_ITEM
+            , TP.PRODUCT_SIZE
+            , TP.PRODUCT_COLOR
+            , TP.PRODUCT_QTY
+            , TP.PRODUCT_PRICE
+            , TP.PRODUCT_ETC
+            , CAST(TP.PRODUCT_PRICE as unsigned) * cast(TP.PRODUCT_QTY as unsigned) TOTAL_PRD_PRC
         FROM
             TB_PRODUCT TP
                 LEFT JOIN TB_ORDER TOR
@@ -29,12 +50,22 @@
     </select>
 
     <select id ="selectStacOrg" parameterType="com.hgb.gssbe.stac.model.StacReq" resultType="com.hgb.gssbe.stac.model.StacOrg">
-        select
+        SELECT
             TOG.ORG_ID
              , TOG.ORG_NAME
-        from
+        FROM
             TB_ORGANIZATION TOG
         WHERE
             TOG.ORG_ID  = #{orgId}
     </select>
+
+    <update id="modifyProduct" parameterType="com.hgb.gssbe.stac.model.StacProductReq">
+        UPDATE TB_PRODUCT
+        SET
+            PRODUCT_PRICE = #{productPrice}
+        WHERE
+            1=1
+            AND
+            PRODUCT_ID = #{productId}
+    </update>
 </mapper>

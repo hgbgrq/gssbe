@@ -16,15 +16,18 @@ public class StacSvc {
 
     public StacRes selectStacList(StacReq stacReq){
         StacOrg stacOrg = stacDao.selectStacOrg(stacReq);
-        List<StacProduct> productList = stacDao.selectStacProductList(stacReq);
+        List<StacMonth> stacMonthList = stacDao.selectStacProductList(stacReq);
+
         return StacRes.builder()
                 .orgId(stacOrg.getOrgId())
                 .orgName(stacOrg.getOrgName())
-                .productList(productList).build();
+                .stacMonthList(stacMonthList).build();
     }
 
-    public void modifyProduct(StacProduct stacProduct){
-
+    public void modifyProduct(StacModifyReq stacModifyReq){
+        for(StacProductReq stacProductReq: stacModifyReq.getStacProductReqList()){
+            stacDao.modifyProduct(stacProductReq);
+        }
     }
 
 }

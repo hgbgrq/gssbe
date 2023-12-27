@@ -14,7 +14,6 @@ public class StacRes{
 
     String orgName;
 
-    List<StacProduct> productList;
-
+    List<StacMonth> stacMonthList;
 
 }

@@ -8,7 +8,9 @@ import java.util.List;
 @Mapper
 public interface StacDao {
 
-    List<StacProduct> selectStacProductList(StacReq stacReq);
+    List<StacMonth> selectStacProductList(StacReq stacReq);
 
     StacOrg selectStacOrg(StacReq stacReq);
+
+    void modifyProduct(StacProductReq stacProductReq);
 }
