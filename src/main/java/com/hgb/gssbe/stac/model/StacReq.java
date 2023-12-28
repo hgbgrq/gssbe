@@ -9,6 +9,8 @@ public class StacReq {
 
     private String orgId;
 
+    private String year;
+
     private String startMonth;
 
     private String endMonth;

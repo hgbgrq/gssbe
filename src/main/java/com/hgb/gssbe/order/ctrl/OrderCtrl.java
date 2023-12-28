@@ -28,19 +28,15 @@ public class OrderCtrl {
     @Operation(summary = "발주 조회")
     @GetMapping
     public ResponseEntity<OrderResList> getOrderList(OrderReq orderReq){
-        OrderResList result = orderSvc.selectOrderList(orderReq);
-        log.info(result.toStringJson());
-        return new ResponseEntity<>(result,HttpStatus.OK);
+        log.info(orderReq.toStringJson());
+        return new ResponseEntity<>(orderSvc.selectOrderList(orderReq) ,HttpStatus.OK);
     }
 
 
     @Operation(summary = "발주 등록")
     @PostMapping
     public ResponseEntity<OrderEnrollInfoRes> enrollOrder(@RequestBody OrderEnrollInfoReq orderEnrollInfoReq){
-        String orderId = orderSvc.enrollOrder(orderEnrollInfoReq);
-        OrderEnrollInfoRes res = new OrderEnrollInfoRes();
-        res.setOrderId(orderId);
-        return new ResponseEntity<>(res,HttpStatus.OK);
+        return new ResponseEntity<>(orderSvc.enrollOrder(orderEnrollInfoReq),HttpStatus.OK);
     }
 
 

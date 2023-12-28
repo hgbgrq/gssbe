@@ -42,21 +42,41 @@
                           ON TOR.ORDER_ID = TP.ORDER_ID
         WHERE
             1=1
-          AND
+            AND
             TP.USE_YN = 'Y'
-          AND
+            AND
             TOR.ORDER_ORG_ID = #{orgId}
+            AND
+            DATE_FORMAT(TOR.ORDER_ORDERING_DATE,'%y') = #{year}
+            <if test = 'startMonth != null and startMonth != ""'>
+                AND DATE_FORMAT(TOR.ORDER_ORDERING_DATE,'%m') >= #{startMonth}
+            </if>
+            <if test = 'endMonth != null and endMonth != ""'>
+                <![CDATA[AND DATE_FORMAT(TOR.ORDER_ORDERING_DATE,'%m') <= #{endMonth}]]>
+            </if>
         ORDER BY TOR.ORDER_ORDERING_DATE, TP.PRODUCT_STYLE_NO
     </select>
 
     <select id ="selectStacOrg" parameterType="com.hgb.gssbe.stac.model.StacReq" resultType="com.hgb.gssbe.stac.model.StacOrg">
         SELECT
-            TOG.ORG_ID
-             , TOG.ORG_NAME
+            TON.ORG_ID
+            , TON.ORG_NAME
         FROM
-            TB_ORGANIZATION TOG
+            TB_ORDER TOR
+                LEFT JOIN TB_ORGANIZATION TON
+                          ON TON.ORG_ID = TOR.ORDER_ORG_ID
         WHERE
-            TOG.ORG_ID  = #{orgId}
+            1=1
+            AND
+            TOR.ORDER_ORG_ID = #{orgId}
+            AND
+            DATE_FORMAT(TOR.ORDER_ORDERING_DATE,'%y') = #{year}
+            <if test = 'startMonth != null and startMonth != ""'>
+                AND DATE_FORMAT(TOR.ORDER_ORDERING_DATE,'%m') >= #{startMonth}
+            </if>
+            <if test = 'endMonth != null and endMonth != ""'>
+                <![CDATA[AND DATE_FORMAT(TOR.ORDER_ORDERING_DATE,'%m') <= #{endMonth}]]>
+            </if>
     </select>
 
     <update id="modifyProduct" parameterType="com.hgb.gssbe.stac.model.StacProductReq">

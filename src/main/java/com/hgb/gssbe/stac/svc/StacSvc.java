@@ -16,6 +16,10 @@ public class StacSvc {
 
     public StacRes selectStacList(StacReq stacReq){
         StacOrg stacOrg = stacDao.selectStacOrg(stacReq);
+
+        if (stacOrg == null){
+           return StacRes.builder().build();
+        }
         List<StacMonth> stacMonthList = stacDao.selectStacProductList(stacReq);
 
         return StacRes.builder()

@@ -23,10 +23,10 @@ public class StacCtrl {
     @Operation(summary = "매입장 조회")
     @GetMapping
     public ResponseEntity<StacRes> selectStacList(StacReq stacReq){
-        StacRes result = stacSvc.selectStacList(stacReq);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return new ResponseEntity<>(stacSvc.selectStacList(stacReq), HttpStatus.OK);
     }
 
+    @Operation(summary = "단가 수정")
     @PostMapping
     public ResponseEntity<GssResponse> modifyProduct(@RequestBody StacModifyReq stacModifyReq){
         stacSvc.modifyProduct(stacModifyReq);

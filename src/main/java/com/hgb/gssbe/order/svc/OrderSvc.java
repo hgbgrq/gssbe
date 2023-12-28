@@ -1,6 +1,7 @@
 package com.hgb.gssbe.order.svc;
 
 import com.hgb.gssbe.common.constance.Excel;
+import com.hgb.gssbe.common.exception.GssException;
 import com.hgb.gssbe.order.dao.OrderDao;
 import com.hgb.gssbe.order.model.*;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,25 +26,18 @@ public class OrderSvc {
     @Autowired
     private OrderDao orderDao;
 
-    public String test(){
-        return orderDao.test();
-    }
-
     public OrderResList selectOrderList(OrderReq orderReq){
-        OrderResList result = new OrderResList();
-        List<OrderRes> list = orderDao.selectOrders(orderReq);
-        Integer totalCount = orderDao.selectOrdersCount(orderReq);
-        result.setList(list);
-        result.setTotalCount(totalCount);
-        return result;
+        return OrderResList.builder()
+                .list(orderDao.selectOrders(orderReq))
+                .totalCount(orderDao.selectOrdersCount(orderReq)).build();
     }
 
-    public String enrollOrder(OrderEnrollInfoReq orderEnrollInfoReq){
+    public OrderEnrollInfoRes enrollOrder(OrderEnrollInfoReq orderEnrollInfoReq){
         String orderId = UUID.randomUUID().toString();
+
         for(OrderEnrollProductReq product: orderEnrollInfoReq.getProductList()){
-            String productId = UUID.randomUUID().toString();
             OrderProduct orderProduct = OrderProduct.builder()
-                    .productId(productId)
+                    .productId(UUID.randomUUID().toString())
                     .orderId(orderId)
                     .productStyleNo(product.getProductStyleNo())
                     .productColor(product.getProductColor())
@@ -63,12 +57,17 @@ public class OrderSvc {
 
         orderDao.insertOrdering(order);
 
-        return orderId;
+        return OrderEnrollInfoRes.builder().orderId(orderId).build();
     }
 
     public void downloadOrder(HttpServletResponse response , String orderId){
         OrderDetail order = orderDao.selectDetailOrder(orderId);
-        makeOrder(order , response);
+        if(order != null)  {
+            makeOrder(order , response);
+        }
+        else {
+            throw new GssException("");
+        }
     }
 
     private void makeOrder(OrderDetail order, HttpServletResponse httpServletResponse){
@@ -159,7 +158,7 @@ public class OrderSvc {
             OutputStream out = httpServletResponse.getOutputStream();
             workbook.write(out);
         } catch (Exception e){
-
+            throw new GssException("");
         }
 
     }

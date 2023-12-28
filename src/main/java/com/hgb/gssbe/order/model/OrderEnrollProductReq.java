@@ -15,9 +15,9 @@ public class OrderEnrollProductReq {
 
     private String productColor;
 
-    private String productQty;
+    private Integer productQty;
 
-    private String productPrice;
+    private Integer productPrice;
 
     private String productEtc;
 

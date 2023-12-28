@@ -33,7 +33,19 @@
                           ON TOR.ORDER_ID  = TPT.ORDER_ID
                 LEFT JOIN TB_ORGANIZATION TON
                           ON TON.ORG_ID = TOR.ORDER_ORG_ID
+        WHERE
+            1=1
+            <if test = 'orgId != null and orgId != ""'>
+                AND TOR.ORDER_ORG_ID = #{orgId}
+            </if>
+            <if test = 'startDate !=null and startDate != ""'>
+                AND TOR.ORDER_ORDERING_DATE >= #{startDate}
+            </if>
+            <if test = 'endDate !=null and endDate != ""'>
+                <![CDATA[ AND TOR.ORDER_ORDERING_DATE <= #{endDate} ]]>
+            </if>
         GROUP BY TOR.ORDER_ID , TOR.ORDER_ORDERING_DATE , TON.ORG_NAME
+        LIMIT #{pageSize} OFFSET #{currentPage}
     </select>
 
     <select id ="selectOrdersCount" resultType="java.lang.Integer"
@@ -42,6 +54,17 @@
             COUNT(TOR.ORDER_ID)
         FROM
             TB_ORDER TOR
+        WHERE
+            1=1
+            <if test = 'orgId != null and orgId != ""'>
+                AND TOR.ORDER_ORG_ID = #{orgId}
+            </if>
+            <if test = 'startDate !=null and startDate != ""'>
+                AND TOR.ORDER_ORDERING_DATE >= #{startDate}
+            </if>
+            <if test = 'endDate !=null and endDate != ""'>
+                <![CDATA[ AND TOR.ORDER_ORDERING_DATE <= #{endDate} ]]>
+            </if>
     </select>
 
     <select id ="selectDetailOrder" parameterType="java.lang.String" resultMap="orderDetailMap">

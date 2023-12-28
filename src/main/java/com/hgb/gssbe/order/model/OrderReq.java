@@ -13,6 +13,10 @@ public class OrderReq {
 
     private String endDate;
 
+    private Integer currentPage;
+
+    private Integer pageSize;
+
     public String toStringJson() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
     }
