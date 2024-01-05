@@ -61,3 +61,4 @@ jobs:
             docker build -t gss_server ./
             docker rm -f gss_server
             docker run -d -i -p 9000:9000 --name gss_server gss_server
+            docker cp /gss/frontEnd/gssFe/baseOrder.xlsx gss_server:/
