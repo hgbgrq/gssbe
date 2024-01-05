@@ -7,6 +7,7 @@
         <collection property="stacProductList" ofType="com.hgb.gssbe.stac.model.StacProduct">
             <result column="ORDER_ID" property="orderId" javaType="string"/>
             <result column="ORDER_ORDERING_DATE" property="orderOrderingDate" javaType="string"/>
+            <result column="ORDER_DEAD_LINE_DATE" property="orderDeadLineDate" javaType="string"/>
             <result column="PRODUCT_ID" property="productId" javaType="string"/>
             <result column="PRODUCT_STYLE_NO" property="productStyleNo" javaType="string"/>
             <result column="PRODUCT_ITEM" property="productItem" javaType="string"/>
@@ -24,9 +25,10 @@
     <select id="selectStacProductList" parameterType="com.hgb.gssbe.stac.model.StacReq"
             resultMap="readStac">
         SELECT
-            DATE_FORMAT(ORDER_ORDERING_DATE,'%m월') MONTH_PART
+            DATE_FORMAT(TOR.ORDER_DEAD_LINE_DATE,'%m월') MONTH_PART
             , TOR.ORDER_ID
             , TOR.ORDER_ORDERING_DATE
+            , TOR.ORDER_DEAD_LINE_DATE
             , TP.PRODUCT_ID
             , TP.PRODUCT_STYLE_NO
             , TP.PRODUCT_ITEM
@@ -47,12 +49,12 @@
             AND
             TOR.ORDER_ORG_ID = #{orgId}
             AND
-            DATE_FORMAT(TOR.ORDER_ORDERING_DATE,'%y') = #{year}
+            DATE_FORMAT(TOR.ORDER_DEAD_LINE_DATE,'%Y') = #{year}
             <if test = 'startMonth != null and startMonth != ""'>
-                AND DATE_FORMAT(TOR.ORDER_ORDERING_DATE,'%m') >= #{startMonth}
+                AND DATE_FORMAT(TOR.ORDER_DEAD_LINE_DATE,'%m') >= #{startMonth}
             </if>
             <if test = 'endMonth != null and endMonth != ""'>
-                <![CDATA[AND DATE_FORMAT(TOR.ORDER_ORDERING_DATE,'%m') <= #{endMonth}]]>
+                <![CDATA[AND DATE_FORMAT(TOR.ORDER_DEAD_LINE_DATE,'%m') <= #{endMonth}]]>
             </if>
         ORDER BY TOR.ORDER_ORDERING_DATE, TP.PRODUCT_STYLE_NO
     </select>
@@ -70,13 +72,16 @@
             AND
             TOR.ORDER_ORG_ID = #{orgId}
             AND
-            DATE_FORMAT(TOR.ORDER_ORDERING_DATE,'%y') = #{year}
+            TOR.USE_YN = 'Y'
+            AND
+            DATE_FORMAT(TOR.ORDER_DEAD_LINE_DATE,'%Y') = #{year}
             <if test = 'startMonth != null and startMonth != ""'>
-                AND DATE_FORMAT(TOR.ORDER_ORDERING_DATE,'%m') >= #{startMonth}
+                AND DATE_FORMAT(TOR.ORDER_DEAD_LINE_DATE,'%m') >= #{startMonth}
             </if>
             <if test = 'endMonth != null and endMonth != ""'>
-                <![CDATA[AND DATE_FORMAT(TOR.ORDER_ORDERING_DATE,'%m') <= #{endMonth}]]>
+                <![CDATA[AND DATE_FORMAT(TOR.ORDER_DEAD_LINE_DATE,'%m') <= #{endMonth}]]>
             </if>
+        GROUP BY TON.ORG_ID, TON.ORG_NAME
     </select>
 
     <update id="modifyProduct" parameterType="com.hgb.gssbe.stac.model.StacProductReq">

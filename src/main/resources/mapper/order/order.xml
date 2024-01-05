@@ -35,6 +35,8 @@
                           ON TON.ORG_ID = TOR.ORDER_ORG_ID
         WHERE
             1=1
+            AND
+            TOR.USE_YN = 'Y'
             <if test = 'orgId != null and orgId != ""'>
                 AND TOR.ORDER_ORG_ID = #{orgId}
             </if>
@@ -56,6 +58,8 @@
             TB_ORDER TOR
         WHERE
             1=1
+            AND
+            TOR.USE_YN = 'Y'
             <if test = 'orgId != null and orgId != ""'>
                 AND TOR.ORDER_ORG_ID = #{orgId}
             </if>
@@ -89,7 +93,11 @@
                 LEFT JOIN TB_ORGANIZATION ORG
                           ON ORG.ORG_ID = TOR.ORDER_ORG_ID
         WHERE
+            1=1
+            AND
             TOR.ORDER_ID = #{orderId}
+            AND
+            TOR.USE_YN = 'Y'
     </select>
 
     <insert id="insertOrdering" parameterType="com.hgb.gssbe.order.model.Order">
@@ -141,5 +149,23 @@
                  , #{createUserId}
                 )
     </insert>
+
+    <update id="deleteOrder" parameterType="com.hgb.gssbe.order.model.OrderDeleteReq">
+        UPDATE TB_ORDER
+        SET USE_YN = 'N'
+        WHERE
+            1=1
+            AND
+            ORDER_ID = #{orderId}
+    </update>
+
+    <update id="deleteProduct" parameterType="com.hgb.gssbe.order.model.OrderDeleteReq">
+        UPDATE TB_PRODUCT
+        SET USE_YN = 'N'
+        WHERE
+            1=1
+            AND
+            ORDER_ID = #{orderId}
+    </update>
 
 </mapper>

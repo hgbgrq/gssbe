@@ -8,7 +8,6 @@ import java.util.List;
 
 @Mapper
 public interface OrderDao {
-    String test();
 
     List<OrderRes> selectOrders(OrderReq orderReq);
 
@@ -19,6 +18,10 @@ public interface OrderDao {
     void insertOrdering(Order order);
 
     void insertOrderProduct(OrderProduct orderProduct);
+
+    void deleteOrder(OrderDeleteReq orderDeleteReq);
+
+    void deleteProduct(OrderDeleteReq orderDeleteReq);
 
 
 }

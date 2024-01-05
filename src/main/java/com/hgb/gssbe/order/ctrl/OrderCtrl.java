@@ -1,6 +1,7 @@
 package com.hgb.gssbe.order.ctrl;
 
 
+import com.hgb.gssbe.common.GssResponse;
 import com.hgb.gssbe.order.model.*;
 import com.hgb.gssbe.order.svc.OrderSvc;
 import io.swagger.v3.oas.annotations.Operation;
@@ -44,5 +45,12 @@ public class OrderCtrl {
     @GetMapping("/downloadExcel/{orderId}")
     public void downloadOrder(HttpServletResponse response , @PathVariable String orderId){
         orderSvc.downloadOrder(response, orderId);
+    }
+
+    @Operation(summary = "발주서 삭제")
+    @PostMapping("/remove")
+    public ResponseEntity<GssResponse> deleteOrder(@RequestBody OrderDeleteReqList orderDeleteReqList){
+        orderSvc.deleteOrder(orderDeleteReqList);
+        return new ResponseEntity<>(new GssResponse(), HttpStatus.OK);
     }
 }

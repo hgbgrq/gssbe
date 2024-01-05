@@ -6,6 +6,7 @@ import com.hgb.gssbe.order.dao.OrderDao;
 import com.hgb.gssbe.order.model.*;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -161,6 +162,17 @@ public class OrderSvc {
             throw new GssException("");
         }
 
+    }
+
+    public void deleteOrder(OrderDeleteReqList orderDeleteReqList){
+        if (CollectionUtils.isEmpty(orderDeleteReqList.getOrderList())){
+            throw new GssException("");
+        }
+
+        for (OrderDeleteReq orderDeleteReq: orderDeleteReqList.getOrderList()){
+            orderDao.deleteOrder(orderDeleteReq);
+            orderDao.deleteProduct(orderDeleteReq);
+        }
     }
 
 }

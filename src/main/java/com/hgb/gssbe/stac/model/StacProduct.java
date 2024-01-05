@@ -27,4 +27,6 @@ public class StacProduct {
 
     private String orderOrderingDate;
 
+    private String orderDeadLineDate;
+
 }

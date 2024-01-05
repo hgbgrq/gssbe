@@ -1,10 +1,12 @@
 package com.hgb.gssbe.stac.svc;
 
 
+import com.hgb.gssbe.common.exception.GssException;
 import com.hgb.gssbe.stac.dao.StacDao;
 import com.hgb.gssbe.stac.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -28,9 +30,14 @@ public class StacSvc {
                 .stacMonthList(stacMonthList).build();
     }
 
-    public void modifyProduct(StacModifyReq stacModifyReq){
-        for(StacProductReq stacProductReq: stacModifyReq.getStacProductReqList()){
-            stacDao.modifyProduct(stacProductReq);
+    public void modifyProduct(StacModifyListReq stacModifyListReq){
+        if(CollectionUtils.isEmpty(stacModifyListReq.getStacProductReqList())){
+            throw new GssException("");
+        }
+        for (StacModifyReq stacModifyReq: stacModifyListReq.getStacProductReqList()){
+            for(StacProductReq stacProductReq: stacModifyReq.getStacProductList()){
+                stacDao.modifyProduct(stacProductReq);
+            }
         }
     }
 

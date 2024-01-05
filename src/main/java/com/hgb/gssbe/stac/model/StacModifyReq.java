@@ -7,6 +7,6 @@ import java.util.List;
 @Data
 public class StacModifyReq {
 
-    List<StacProductReq> stacProductReqList;
+    List<StacProductReq> stacProductList;
 
 }
