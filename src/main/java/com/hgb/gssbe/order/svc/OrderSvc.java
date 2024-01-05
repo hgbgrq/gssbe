@@ -74,7 +74,7 @@ public class OrderSvc {
     private void makeOrder(OrderDetail order, HttpServletResponse httpServletResponse){
 
         try {
-            FileInputStream file = new FileInputStream("/gss/frontEnd/gssFe/baseOrder.xlsx");
+            FileInputStream file = new FileInputStream("/baseOrder.xlsx");
             XSSFWorkbook workbook = new XSSFWorkbook(file);
 
             Font upFont = workbook.createFont();
