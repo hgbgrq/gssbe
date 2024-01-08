@@ -29,6 +29,8 @@ public class OrderProduct {
 
     private String createUserId;
 
+    private Integer productSort;
+
     public String toStringJson() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
     }

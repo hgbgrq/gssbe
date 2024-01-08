@@ -98,6 +98,8 @@
             TOR.ORDER_ID = #{orderId}
             AND
             TOR.USE_YN = 'Y'
+        ORDER BY
+            TP.PRODUCT_SORT
     </select>
 
     <insert id="insertOrdering" parameterType="com.hgb.gssbe.order.model.Order">
@@ -131,6 +133,7 @@
                 , PRODUCT_QTY
                 , PRODUCT_PRICE
                 , PRODUCT_ETC
+                , PRODUCT_SORT
                 , USE_YN
                 , CREATE_DATE
                 , CREATE_USER_ID
@@ -144,6 +147,7 @@
                  , #{productQty}
                  , #{productPrice}
                  , #{productEtc}
+                 , #{productSort}
                  , 'Y'
                  , NOW()
                  , #{createUserId}

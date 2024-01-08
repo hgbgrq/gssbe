@@ -35,7 +35,7 @@ public class OrderSvc {
 
     public OrderEnrollInfoRes enrollOrder(OrderEnrollInfoReq orderEnrollInfoReq){
         String orderId = UUID.randomUUID().toString();
-
+        Integer sortCount = 0;
         for(OrderEnrollProductReq product: orderEnrollInfoReq.getProductList()){
             OrderProduct orderProduct = OrderProduct.builder()
                     .productId(UUID.randomUUID().toString())
@@ -45,8 +45,10 @@ public class OrderSvc {
                     .productItem(product.getProductItem())
                     .productSize(product.getProductSize())
                     .productQty(product.getProductQty())
+                    .productSort(sortCount)
                     .productEtc(product.getProductEtc()).build();
             orderDao.insertOrderProduct(orderProduct);
+            sortCount ++;
         }
 
         Order order = Order.builder()
