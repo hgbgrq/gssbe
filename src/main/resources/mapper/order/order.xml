@@ -23,31 +23,40 @@
     <select id = "selectOrders" resultType="com.hgb.gssbe.order.model.OrderRes"
             parameterType="com.hgb.gssbe.order.model.OrderReq">
         SELECT
-            TOR.ORDER_ID
-            , TOR.ORDER_ORDERING_DATE
-            , TON.ORG_NAME
-            , GROUP_CONCAT(DISTINCT TPT.PRODUCT_STYLE_NO ORDER BY TPT.PRODUCT_STYLE_NO SEPARATOR ', ') ORDER_STYLE_NOS
-        FROM
-            TB_ORDER TOR
+            TB.ORDER_ID
+            , TB.ORDER_ORDERING_DATE
+            , TB.ORDER_DEAD_LINE_DATE
+            , TB.ORG_NAME
+            , TB.ORDER_STYLE_NOS
+        FROM (
+            SELECT
+                TOR.ORDER_ID
+                , TOR.ORDER_ORDERING_DATE
+                , TOR.ORDER_DEAD_LINE_DATE
+                , TON.ORG_NAME
+                , GROUP_CONCAT(DISTINCT TPT.PRODUCT_STYLE_NO ORDER BY TPT.PRODUCT_STYLE_NO SEPARATOR ', ') ORDER_STYLE_NOS
+            FROM
+                TB_ORDER TOR
                 LEFT JOIN TB_PRODUCT TPT
-                          ON TOR.ORDER_ID  = TPT.ORDER_ID
+                ON TOR.ORDER_ID = TPT.ORDER_ID
                 LEFT JOIN TB_ORGANIZATION TON
-                          ON TON.ORG_ID = TOR.ORDER_ORG_ID
-        WHERE
+                ON TON.ORG_ID = TOR.ORDER_ORG_ID
+            WHERE
             1=1
             AND
             TOR.USE_YN = 'Y'
-            <if test = 'orgId != null and orgId != ""'>
-                AND TOR.ORDER_ORG_ID = #{orgId}
+            <if test='orgId != null and orgId != ""'>AND TOR.ORDER_ORG_ID = #{orgId}
             </if>
-            <if test = 'startDate !=null and startDate != ""'>
-                AND TOR.ORDER_ORDERING_DATE >= #{startDate}
+            <if test = '
+            startDate !=null and startDate != ""'>AND TOR.ORDER_ORDERING_DATE >= #{startDate}
             </if>
-            <if test = 'endDate !=null and endDate != ""'>
-                <![CDATA[ AND TOR.ORDER_ORDERING_DATE <= #{endDate} ]]>
-            </if>
-        GROUP BY TOR.ORDER_ID , TOR.ORDER_ORDERING_DATE , TON.ORG_NAME
-        LIMIT #{pageSize} OFFSET #{currentPage}
+                <if test = 'endDate !=null and endDate != ""'>
+                    <![CDATA[ AND TOR.ORDER_ORDERING_DATE <= #{endDate} ]]>
+                </if>
+            GROUP BY TOR.ORDER_ID , TOR.ORDER_ORDERING_DATE, TOR.ORDER_DEAD_LINE_DATE , TON.ORG_NAME
+        ) TB
+        ORDER BY TB.ORG_NAME, TB.ORDER_ORDERING_DATE , TB.ORDER_DEAD_LINE_DATE
+        LIMIT #{pageSize} OFFSET #{offset}
     </select>
 
     <select id ="selectOrdersCount" resultType="java.lang.Integer"
@@ -170,6 +179,34 @@
             1=1
             AND
             ORDER_ID = #{orderId}
+    </update>
+
+    <update id="updateOrder" parameterType="com.hgb.gssbe.order.model.OrderModifyReq">
+        UPDATE TB_ORDER
+        SET
+            ORDER_ORG_ID = #{orgId}
+            , ORDER_ORDERING_DATE = #{orderOrderingDate}
+            , ORDER_DEAD_LINE_DATE = #{orderDeadLineDate}
+            , UPDATE_ID = #{updateUserId}
+            , UPDATE_DATE = NOW()
+        WHERE
+            ORDER_ID = #{orderId}
+    </update>
+
+    <update id="updateOrderProduct" parameterType="com.hgb.gssbe.order.model.OrderProduct">
+        UPDATE TB_PRODUCT
+        SET
+            PRODUCT_STYLE_NO = #{productStyleNo}
+            , PRODUCT_ITEM = #{productItem}
+            , PRODUCT_SIZE = #{productSize}
+            , PRODUCT_COLOR = #{productColor}
+            , PRODUCT_QTY = #{productQty}
+            , PRODUCT_PRICE = #{productPrice}
+            , PRODUCT_ETC = #{productEtc}
+            , UPDATE_DATE = NOW()
+            , UPDATE_ID = #{createUserId}
+        WHERE
+            PRODUCT_ID = #{productId}
     </update>
 
 </mapper>

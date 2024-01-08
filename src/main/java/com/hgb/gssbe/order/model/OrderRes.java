@@ -10,6 +10,7 @@ public class OrderRes {
     private String orderId;
     private String orgName;
     private String orderOrderingDate;
+    private String orderDeadLineDate;
     private String orderStyleNos;
 
     public String toStringJson() {

@@ -29,7 +29,6 @@ public class OrderCtrl {
     @Operation(summary = "발주 조회")
     @GetMapping
     public ResponseEntity<OrderResList> getOrderList(OrderReq orderReq){
-        log.info(orderReq.toStringJson());
         return new ResponseEntity<>(orderSvc.selectOrderList(orderReq) ,HttpStatus.OK);
     }
 
@@ -51,6 +50,19 @@ public class OrderCtrl {
     @PostMapping("/remove")
     public ResponseEntity<GssResponse> deleteOrder(@RequestBody OrderDeleteReqList orderDeleteReqList){
         orderSvc.deleteOrder(orderDeleteReqList);
+        return new ResponseEntity<>(new GssResponse(), HttpStatus.OK);
+    }
+
+    @Operation(summary = "발주서 상세조회")
+    @GetMapping("/{orderId}")
+    public ResponseEntity<OrderDetailRes> getDetailOrder(@PathVariable String orderId){
+        return new ResponseEntity<>(orderSvc.getDetailOrder(orderId), HttpStatus.OK);
+    }
+
+    @Operation(summary = "발주서 수정")
+    @PostMapping("/modify")
+    public ResponseEntity<GssResponse> modifyOrder(@RequestBody OrderModifyReq orderModifyReq){
+        orderSvc.modifyOrder(orderModifyReq);
         return new ResponseEntity<>(new GssResponse(), HttpStatus.OK);
     }
 }

@@ -28,6 +28,7 @@ public class OrderSvc {
     private OrderDao orderDao;
 
     public OrderResList selectOrderList(OrderReq orderReq){
+        orderReq.setOffset(orderReq.getCurrentPage() * orderReq.getPageSize());
         return OrderResList.builder()
                 .list(orderDao.selectOrders(orderReq))
                 .totalCount(orderDao.selectOrdersCount(orderReq)).build();
@@ -177,5 +178,28 @@ public class OrderSvc {
         }
     }
 
+    public OrderDetailRes getDetailOrder(String orderId){
+        OrderDetail order = orderDao.selectDetailOrder(orderId);
+        if (order == null){
+            throw new GssException("");
+        }
+        return OrderDetailRes.builder()
+                .orgName(order.getOrgName())
+                .orderDeadLineDate(order.getOrderDeadLineDate())
+                .productList(order.getProductList())
+                .orderOrderingDate(order.getOrderOrderingDate())
+                .orderId(order.getOrderId())
+                .orgId(order.getOrgId())
+                .build();
+    }
+
+    public void modifyOrder(OrderModifyReq orderModifyReq){
+        orderDao.updateOrder(orderModifyReq);
+
+        for(OrderProduct orderProduct :orderModifyReq.getProductList()){
+            orderDao.updateOrderProduct(orderProduct);
+        }
+
+    }
 }
 

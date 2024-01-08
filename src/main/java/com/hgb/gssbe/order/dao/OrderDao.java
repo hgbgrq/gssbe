@@ -23,5 +23,9 @@ public interface OrderDao {
 
     void deleteProduct(OrderDeleteReq orderDeleteReq);
 
+    void updateOrder(OrderModifyReq orderModifyReq);
+
+    void updateOrderProduct(OrderProduct orderProduct);
+
 
 }
