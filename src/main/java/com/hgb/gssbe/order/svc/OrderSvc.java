@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -19,9 +20,7 @@ import java.io.FileInputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -84,7 +83,6 @@ public class OrderSvc {
             int rowCount = Excel.PRD_START_ROW.getRow();
             int endCount = Excel.PRD_END_ROW.getRow();
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append(order.getOrgName());
 
             FileInputStream file = new FileInputStream("/baseOrder.xlsx");
             XSSFWorkbook workbook = new XSSFWorkbook(file);
@@ -92,6 +90,7 @@ public class OrderSvc {
             XSSFSheet sheet = workbook.getSheetAt(0);
 
             makeCell(sheet, Excel.ORGANIZATION.getRow(), Excel.ORGANIZATION.getCell(),order.getOrgName());
+            stringBuilder.append(order.getOrgName());
             makeCell(sheet, Excel.ORDERING_DATE.getRow(), Excel.ORDERING_DATE.getCell(),order.getOrderOrderingDate());
             makeCell(sheet, Excel.DEAD_LINE_DATE.getRow(), Excel.DEAD_LINE_DATE.getCell(),order.getOrderDeadLineDate());
 

@@ -37,7 +37,7 @@
             , TP.PRODUCT_QTY
             , TP.PRODUCT_PRICE
             , TP.PRODUCT_ETC
-            , CAST(TP.PRODUCT_PRICE as unsigned) * cast(TP.PRODUCT_QTY as unsigned) TOTAL_PRD_PRC
+            , CAST(TP.PRODUCT_PRICE as unsigned) * cast(TP.PRODUCT_QTY as unsigned) * 1.1 TOTAL_PRD_PRC
         FROM
             TB_PRODUCT TP
                 LEFT JOIN TB_ORDER TOR
