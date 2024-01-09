@@ -23,4 +23,5 @@ public class OrderProductRes {
     private String productEtc;
 
     private String createUserId;
+
 }

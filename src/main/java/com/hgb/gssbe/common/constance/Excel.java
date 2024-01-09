@@ -11,7 +11,9 @@ public enum Excel {
     , COLOR(1 - 1 , 11 - 1)
     , QTY(1 - 1 , 12 - 1)
     , ETC(1 - 1  , 13 - 1)
-    , PRD_START_ROW(12 - 1 , 1 - 1);
+    , PRD_START_ROW(12 - 1 , 1 - 1)
+    , PRD_END_ROW(23 - 1 , 1 - 1)
+    , QTY_SUM(1 - 1, 12 - 1);
 
     private final int row;
     private final int cell;

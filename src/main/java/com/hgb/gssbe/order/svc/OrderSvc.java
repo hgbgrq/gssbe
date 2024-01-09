@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -17,8 +18,11 @@ import org.springframework.stereotype.Service;
 import java.io.FileInputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -77,94 +81,60 @@ public class OrderSvc {
     private void makeOrder(OrderDetail order, HttpServletResponse httpServletResponse){
 
         try {
+            int rowCount = Excel.PRD_START_ROW.getRow();
+            int endCount = Excel.PRD_END_ROW.getRow();
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(order.getOrgName());
+
             FileInputStream file = new FileInputStream("/baseOrder.xlsx");
             XSSFWorkbook workbook = new XSSFWorkbook(file);
 
-            Font upFont = workbook.createFont();
-            upFont.setBold(true);
-            upFont.setFontName("바탕");
-            upFont.setFontHeight((short) 280);
-
-            Font prdFont = workbook.createFont();
-            prdFont.setBold(true);
-            prdFont.setFontName("한컴바탕");
-            prdFont.setFontHeight((short) 200);
-
-            CellStyle upCellStyle = workbook.createCellStyle();
-            upCellStyle.setFont(upFont);
-            upCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-
-            CellStyle prdCellStyle = workbook.createCellStyle();
-            prdCellStyle.setFont(prdFont);
-            prdCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-            prdCellStyle.setBorderBottom(BorderStyle.THIN);
-            prdCellStyle.setBorderLeft(BorderStyle.THIN);
-            prdCellStyle.setBorderRight(BorderStyle.THIN);
-            prdCellStyle.setBorderTop(BorderStyle.THIN);
-
             XSSFSheet sheet = workbook.getSheetAt(0);
 
-            // 발주 업체 이름
-            XSSFRow row = sheet.getRow(Excel.ORGANIZATION.getRow());
-            Cell orgCell = row.createCell(Excel.ORGANIZATION.getCell());
-            orgCell.setCellValue(order.getOrgName());
-            orgCell.setCellStyle(upCellStyle);
-
-            // 발주 날짜
-            row = sheet.getRow(Excel.ORDERING_DATE.getRow());
-            Cell dateCell = row.createCell(Excel.ORDERING_DATE.getCell());
-            dateCell.setCellValue(order.getOrderOrderingDate());
-            dateCell.setCellStyle(upCellStyle);
-
-            //발주 기한
-            row = sheet.getRow(Excel.DEAD_LINE_DATE.getRow());
-            Cell deadLineCell = row.createCell(Excel.DEAD_LINE_DATE.getCell());
-            deadLineCell.setCellValue(order.getOrderDeadLineDate());
-            deadLineCell.setCellStyle(upCellStyle);
-
-            //발주 목록 시작 row수
-            int rowCount = Excel.PRD_START_ROW.getRow();
-            String excelName = "";
+            makeCell(sheet, Excel.ORGANIZATION.getRow(), Excel.ORGANIZATION.getCell(),order.getOrgName());
+            makeCell(sheet, Excel.ORDERING_DATE.getRow(), Excel.ORDERING_DATE.getCell(),order.getOrderOrderingDate());
+            makeCell(sheet, Excel.DEAD_LINE_DATE.getRow(), Excel.DEAD_LINE_DATE.getCell(),order.getOrderDeadLineDate());
 
             for (OrderProductRes orderProduct : order.getProductList()){
-                row = sheet.getRow(rowCount);
-
-                Cell styleCell = row.createCell(Excel.STYLE_NO.getCell());
-                styleCell.setCellValue(orderProduct.getProductStyleNo());
-                styleCell.setCellStyle(prdCellStyle);
-                excelName += String.format(", %s",orderProduct.getProductStyleNo());
-
-                Cell itemCell = row.createCell(Excel.ITEM.getCell());
-                itemCell.setCellValue(orderProduct.getProductItem());
-                itemCell.setCellStyle(prdCellStyle);
-
-                Cell sizeCell = row.createCell(Excel.SIZE.getCell());
-                sizeCell.setCellValue(orderProduct.getProductSize());
-                sizeCell.setCellStyle(prdCellStyle);
-
-                Cell colorCell = row.createCell(Excel.COLOR.getCell());
-                colorCell.setCellValue(orderProduct.getProductColor());
-                colorCell.setCellStyle(prdCellStyle);
-
-                Cell qtyCell = row.createCell(Excel.QTY.getCell());
-                qtyCell.setCellValue(orderProduct.getProductQty());
-                qtyCell.setCellStyle(prdCellStyle);
-
-                Cell etcCell = row.createCell(Excel.ETC.getCell());
-                etcCell.setCellValue(orderProduct.getProductEtc());
-                etcCell.setCellStyle(prdCellStyle);
-
+                if(rowCount ==  endCount){
+                    sheet.shiftRows(endCount + 1, endCount + 9, 1, true, true);
+                    sheet.copyRows(endCount ,endCount, endCount + 1 , new CellCopyPolicy());
+                    endCount ++;
+                }
+                makeCell(sheet , rowCount ,Excel.STYLE_NO.getCell() ,orderProduct.getProductStyleNo());
+                makeCell(sheet , rowCount ,Excel.ITEM.getCell() ,orderProduct.getProductItem());
+                makeCell(sheet , rowCount ,Excel.SIZE.getCell() ,orderProduct.getProductSize());
+                makeCell(sheet , rowCount ,Excel.COLOR.getCell() ,orderProduct.getProductColor());
+                makeCell(sheet , rowCount ,Excel.QTY.getCell() ,orderProduct.getProductQty());
+                makeCell(sheet , rowCount ,Excel.ETC.getCell() ,orderProduct.getProductEtc());
                 rowCount++;
             }
 
+            double qtySum = order.getProductList().stream().mapToDouble(OrderProductRes-> Double.parseDouble(OrderProductRes.getProductQty())).sum();
+            makeCell(sheet , endCount + 1 ,Excel.QTY_SUM.getCell() ,Double.toString(qtySum));
+
+            order.getProductList().stream().map(OrderProductRes::getProductStyleNo).distinct().forEach(StyleNo -> stringBuilder.append(" ").append(StyleNo));
+
             httpServletResponse.setContentType("application/vnd.msexcel;");
-            httpServletResponse.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(excelName, "UTF-8") + ".xlsx");
+            httpServletResponse.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(stringBuilder.toString(), StandardCharsets.UTF_8) + ".xlsx");
             OutputStream out = httpServletResponse.getOutputStream();
             workbook.write(out);
         } catch (Exception e){
+            log.info(e.getMessage());
             throw new GssException("");
         }
+    }
 
+    private void makeCell(XSSFSheet sheet , int rowNum , int cellNum , String value){
+        XSSFRow row = sheet.getRow(rowNum);
+        XSSFCellStyle preStyleCell = row.getCell(cellNum).getCellStyle();
+        Cell qtyCell = row.createCell(cellNum);
+        qtyCell.setCellStyle(preStyleCell);
+        try {
+            qtyCell.setCellValue(Double.parseDouble(value));
+        }catch (Exception e){
+            qtyCell.setCellValue(value);
+        }
     }
 
     public void deleteOrder(OrderDeleteReqList orderDeleteReqList){
