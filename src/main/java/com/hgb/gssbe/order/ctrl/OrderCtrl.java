@@ -74,8 +74,8 @@ public class OrderCtrl {
 
     @Operation(summary = "발주서 등록")
     @PostMapping(value = "/uploadExcel" , consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<GssResponse> uploadOrderExcel(@RequestPart(value="file") List<MultipartFile> orders) throws IOException, InvalidFormatException {
-        orderSvc.uploadOrderExcel(orders);
+    public ResponseEntity<GssResponse> uploadOrderExcel(@RequestPart(value="file") List<MultipartFile> file) throws IOException, InvalidFormatException {
+        orderSvc.uploadOrderExcel(file);
         return new ResponseEntity<>(new GssResponse(), HttpStatus.OK);
     }
 }

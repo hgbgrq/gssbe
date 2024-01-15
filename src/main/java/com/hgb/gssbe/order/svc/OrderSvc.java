@@ -192,6 +192,10 @@ public class OrderSvc {
 
             for(int i = 0 ; i < sheetCount; i ++){
                 String orderId = UUID.randomUUID().toString();
+                String tmpStyleNo = "";
+                String tmpItem = "";
+                String tmpSize = "";
+                String tmpColor = "";
                 int productRowNum = Excel.PRD_START_ROW.getRow();
                 XSSFSheet sheet = workbook.getSheetAt(i);
 
@@ -212,22 +216,62 @@ public class OrderSvc {
 
                 for(int j = 0 ; j < 100; j ++){
 
-                    productRowNum += j;
-                    String lastCheckValue = getCellValue(sheet, productRowNum, Excel.STYLE_NO.getCell());
-                    if("합  계".equals(lastCheckValue)){
+                    int isValid = 0;
+
+                    String styleNo = getCellValue(sheet, productRowNum + j, Excel.STYLE_NO.getCell());
+                    String color = getCellValue(sheet, productRowNum + j, Excel.COLOR.getCell());
+                    String item = getCellValue(sheet, productRowNum + j, Excel.ITEM.getCell());
+                    String size = getCellValue(sheet, productRowNum + j, Excel.SIZE.getCell());
+                    Integer qty = Integer.parseInt(getCellValue(sheet, productRowNum + j, Excel.QTY.getCell()));
+                    String etc = getCellValue(sheet, productRowNum + j, Excel.ETC.getCell());
+
+                    if("합  계".equals(styleNo)){
                         break;
                     }
+
+                    if(StringUtils.isEmpty(styleNo)){
+                        isValid++;
+                        styleNo = tmpStyleNo;
+                    }else{
+                        tmpStyleNo = styleNo;
+                    }
+
+                    if(StringUtils.isEmpty(color)){
+                        isValid++;
+                        color = tmpColor;
+                    }else{
+                        tmpColor = color;
+                    }
+
+                    if(StringUtils.isEmpty(item)){
+                        isValid++;
+                        item = tmpItem;
+                    }else{
+                        tmpItem = item;
+                    }
+
+                    if(StringUtils.isEmpty(size)){
+                        isValid++;
+                        size = tmpSize;
+                    }else{
+                        tmpSize = size;
+                    }
+
+                    if(isValid == 4){
+                        break;
+                    }
+
 
                     OrderProduct orderProduct = OrderProduct.builder()
                             .productId(UUID.randomUUID().toString())
                             .orderId(orderId)
-                            .productStyleNo(lastCheckValue)
-                            .productColor(getCellValue(sheet, productRowNum, Excel.STYLE_NO.getCell()))
-                            .productItem(getCellValue(sheet, productRowNum, Excel.STYLE_NO.getCell()))
-                            .productSize(getCellValue(sheet, productRowNum, Excel.STYLE_NO.getCell()))
-                            .productQty(Integer.parseInt(getCellValue(sheet, productRowNum, Excel.STYLE_NO.getCell())))
+                            .productStyleNo(styleNo)
+                            .productColor(color)
+                            .productItem(item)
+                            .productSize(size)
+                            .productQty(qty)
                             .productSort(j)
-                            .productEtc(getCellValue(sheet, productRowNum, Excel.STYLE_NO.getCell())).build();
+                            .productEtc(etc).build();
                     orderDao.insertOrderProduct(orderProduct);
                 }
             }
@@ -235,7 +279,10 @@ public class OrderSvc {
     }
 
     public String getCellValue(XSSFSheet sheet, Integer rowNum , Integer cellNum){
-        return sheet.getRow(rowNum).getCell(cellNum).toString();
+        if(cellNum == Excel.QTY.getCell()){
+            return Integer.toString((int)sheet.getRow(rowNum).getCell(cellNum).getNumericCellValue());
+        }
+        return sheet.getRow(rowNum).getCell(cellNum).getStringCellValue();
     }
 
     public String getGssDateValue(String rawDate){
