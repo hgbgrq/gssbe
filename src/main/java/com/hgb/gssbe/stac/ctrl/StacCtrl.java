@@ -26,12 +26,11 @@ public class StacCtrl {
     @GetMapping
     public ResponseEntity<StacRes> selectStacList(StacReq stacReq){
         return new ResponseEntity<>(stacSvc.selectStacList(stacReq), HttpStatus.OK);
-    }
+    } 
 
     @Operation(summary = "단가 수정")
     @PostMapping
     public ResponseEntity<GssResponse> modifyProduct(@RequestBody StacModifyListReq stacModifyListReq){
-        log.info(stacModifyListReq.toStringJson());
         stacSvc.modifyProduct(stacModifyListReq);
         return new ResponseEntity<>(new GssResponse() ,HttpStatus.OK);
     }

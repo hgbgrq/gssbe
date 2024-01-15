@@ -27,5 +27,7 @@ public interface OrderDao {
 
     void updateOrderProduct(OrderProduct orderProduct);
 
+    String selectOrganizationIdByOrganizationName(String orgName);
+
 
 }

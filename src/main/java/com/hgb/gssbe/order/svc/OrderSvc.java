@@ -7,6 +7,9 @@ import com.hgb.gssbe.order.model.*;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
@@ -15,8 +18,11 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -129,11 +135,16 @@ public class OrderSvc {
         XSSFCellStyle preStyleCell = row.getCell(cellNum).getCellStyle();
         Cell qtyCell = row.createCell(cellNum);
         qtyCell.setCellStyle(preStyleCell);
-        try {
-            qtyCell.setCellValue(Double.parseDouble(value));
-        }catch (Exception e){
-            qtyCell.setCellValue(value);
+        if(rowNum == Excel.ORDERING_DATE.getRow() || rowNum == Excel.DEAD_LINE_DATE.getRow()){
+            String[] dates = value.split("-");
+            qtyCell.setCellValue(String.format("%s년%s월%s일",dates[0],dates[1],dates[2]));
+            return;
         }
+        if(cellNum == Excel.QTY.getCell() || cellNum == Excel.QTY_SUM.getCell()){
+            qtyCell.setCellValue(Double.parseDouble(value));
+            return;
+        }
+        qtyCell.setCellValue(value);
     }
 
     public void deleteOrder(OrderDeleteReqList orderDeleteReqList){
@@ -170,5 +181,66 @@ public class OrderSvc {
         }
 
     }
+
+    @Transactional
+    public void uploadOrderExcel(List<MultipartFile> orders) throws IOException, InvalidFormatException {
+        for(MultipartFile orderFile: orders){
+
+            OPCPackage opcPackage = OPCPackage.open(orderFile.getInputStream());
+            XSSFWorkbook workbook = new XSSFWorkbook(opcPackage);
+            int sheetCount = workbook.getNumberOfSheets();
+
+            for(int i = 0 ; i < sheetCount; i ++){
+                String orderId = UUID.randomUUID().toString();
+                int productRowNum = Excel.PRD_START_ROW.getRow();
+                XSSFSheet sheet = workbook.getSheetAt(i);
+
+                String orgName = getCellValue(sheet, Excel.ORGANIZATION.getRow() , Excel.ORGANIZATION.getCell());
+                String orgId = orderDao.selectOrganizationIdByOrganizationName(orgName);
+                if(StringUtils.isEmpty(orgId)){
+                    throw new GssException("");
+                }
+
+                Order order = Order.builder()
+                        .orderId(orderId)
+                        .orderOrderingDate(getGssDateValue(getCellValue(sheet, Excel.ORDERING_DATE.getRow() , Excel.ORDERING_DATE.getCell())))
+                        .orderDeadLineDate(getGssDateValue(getCellValue(sheet, Excel.DEAD_LINE_DATE.getRow() , Excel.DEAD_LINE_DATE.getCell())))
+                        .orgId(orgId)
+                        .build();
+
+                orderDao.insertOrdering(order);
+
+                for(int j = 0 ; j < 100; j ++){
+
+                    productRowNum += j;
+                    String lastCheckValue = getCellValue(sheet, productRowNum, Excel.STYLE_NO.getCell());
+                    if("합  계".equals(lastCheckValue)){
+                        break;
+                    }
+
+                    OrderProduct orderProduct = OrderProduct.builder()
+                            .productId(UUID.randomUUID().toString())
+                            .orderId(orderId)
+                            .productStyleNo(lastCheckValue)
+                            .productColor(getCellValue(sheet, productRowNum, Excel.STYLE_NO.getCell()))
+                            .productItem(getCellValue(sheet, productRowNum, Excel.STYLE_NO.getCell()))
+                            .productSize(getCellValue(sheet, productRowNum, Excel.STYLE_NO.getCell()))
+                            .productQty(Integer.parseInt(getCellValue(sheet, productRowNum, Excel.STYLE_NO.getCell())))
+                            .productSort(j)
+                            .productEtc(getCellValue(sheet, productRowNum, Excel.STYLE_NO.getCell())).build();
+                    orderDao.insertOrderProduct(orderProduct);
+                }
+            }
+        }
+    }
+
+    public String getCellValue(XSSFSheet sheet, Integer rowNum , Integer cellNum){
+        return sheet.getRow(rowNum).getCell(cellNum).toString();
+    }
+
+    public String getGssDateValue(String rawDate){
+        return rawDate.replace("년", "-").replace("월","-").replace("일", "");
+    }
+
 }
 

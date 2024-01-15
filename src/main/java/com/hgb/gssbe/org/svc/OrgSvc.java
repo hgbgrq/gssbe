@@ -21,21 +21,16 @@ public class OrgSvc {
     private OrgDao orgDao;
 
     public OrgResList selectOrgList(OrgReq orgReq){
-        OrgResList result = new OrgResList();
-        List<OrgRes> list = orgDao.selectOrgList(orgReq);
-        Integer totalCount = orgDao.selectOrgCount(orgReq);
-        result.setList(list);
-        result.setTotalCount(totalCount);
-        return result;
+        return OrgResList.builder()
+                        .list(orgDao.selectOrgList(orgReq))
+                        .totalCount(orgDao.selectOrgCount(orgReq)).build();
     }
 
     public void createOrg(Org org){
-
         if (orgDao.selectOrgCountByName(org.getOrgName()) > 0){
             throw new GssException("registered-org-name");
         }
-        String orgId = UUID.randomUUID().toString();
-        org.setOrgId(orgId);
+        org.setOrgId(UUID.randomUUID().toString());
         orgDao.createOrg(org);
     }
 
@@ -47,6 +42,9 @@ public class OrgSvc {
 
     public Org selectOrgDetail(String orgId){
         Org result = orgDao.selectOrgDetail(orgId);
+        if(result == null){
+            throw new GssException("");
+        }
         return result;
     }
 

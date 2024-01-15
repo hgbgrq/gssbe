@@ -111,6 +111,15 @@
             TP.PRODUCT_SORT
     </select>
 
+    <select id="selectOrganizationIdByOrganizationName" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT
+            ORG_ID
+        FROM
+            TB_ORGANIZATION
+        WHERE
+            ORG_NAME = #{orgName}
+    </select>
+
     <insert id="insertOrdering" parameterType="com.hgb.gssbe.order.model.Order">
         INSERT INTO TB_ORDER(
                 ORDER_ID
