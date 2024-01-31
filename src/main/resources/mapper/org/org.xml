@@ -1,143 +1,128 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace = "com.hgb.gssbe.org.dao.OrgDao">
+<mapper namespace="com.hgb.gssbe.org.dao.OrgDao">
 
     <select id="selectOrgList" parameterType="com.hgb.gssbe.org.model.OrgReq"
             resultType="com.hgb.gssbe.org.model.OrgRes">
         SELECT
-            ORG_ID
-             , ORG_NAME
-             , ORG_ADDRESS
-             , ORG_NUMBER
-             , ORG_PAX_NUMBER
+        ORG_ID
+        , ORG_NAME
+        , ORG_ADDRESS
+        , ORG_NUMBER
+        , ORG_PAX_NUMBER
         FROM
-            gss.TB_ORGANIZATION
-        WHERE
-            1 = 1
-            AND
-            USE_YN = 'Y'
-            <if test='keyWord !=null and keyWord != ""'>
-            AND
-            (
-                ORG_NAME LIKE CONCAT('%', #{keyWord}, '%')
-                OR
-                ORG_NUMBER LIKE CONCAT('%', #{keyWord}, '%')
-                OR
-                ORG_PAX_NUMBER LIKE CONCAT('%', #{keyWord}, '%')
-            )
-            </if>
-    </select>
-
-    <select id="selectOrgCount" parameterType="com.hgb.gssbe.org.model.OrgReq"
-            resultType="java.lang.Integer">
-        SELECT
-            COUNT(ORG_ID)
-        FROM
-            gss.TB_ORGANIZATION
+        gss.TB_ORGANIZATION
         WHERE
         1 = 1
         AND
         USE_YN = 'Y'
         <if test='keyWord !=null and keyWord != ""'>
-        AND
-        (
+            AND
+            (
             ORG_NAME LIKE CONCAT('%', #{keyWord}, '%')
             OR
             ORG_NUMBER LIKE CONCAT('%', #{keyWord}, '%')
             OR
             ORG_PAX_NUMBER LIKE CONCAT('%', #{keyWord}, '%')
-        )
+            )
+        </if>
+        ORDER BY ORG_NAME
+    </select>
+
+    <select id="selectOrgCount" parameterType="com.hgb.gssbe.org.model.OrgReq"
+            resultType="java.lang.Integer">
+        SELECT
+        COUNT(ORG_ID)
+        FROM
+        gss.TB_ORGANIZATION
+        WHERE
+        1 = 1
+        AND
+        USE_YN = 'Y'
+        <if test='keyWord !=null and keyWord != ""'>
+            AND
+            (
+            ORG_NAME LIKE CONCAT('%', #{keyWord}, '%')
+            OR
+            ORG_NUMBER LIKE CONCAT('%', #{keyWord}, '%')
+            OR
+            ORG_PAX_NUMBER LIKE CONCAT('%', #{keyWord}, '%')
+            )
         </if>
     </select>
 
-    <select id ="selectOrgCountByName" parameterType="java.lang.String" resultType="java.lang.Integer">
-        SELECT
-            COUNT(1)
-        FROM
-            gss.TB_ORGANIZATION
-        WHERE
-            ORG_NAME = #{orgName}
-            AND
-            USE_YN = 'Y'
+    <select id="selectOrgCountByName" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM gss.TB_ORGANIZATION
+        WHERE ORG_NAME = #{orgName}
+          AND USE_YN = 'Y'
     </select>
-    
+
     <insert id="createOrg" parameterType="com.hgb.gssbe.org.model.Org">
         INSERT INTO gss.TB_ORGANIZATION
-            (
-                ORG_ID
-                , ORG_NAME
-                , ORG_ADDRESS
-                , ORG_NUMBER
-                , ORG_PAX_NUMBER
-                , ORG_EMAIL
-                , ORG_ADDRESS_DETAIL
-                , ORG_ZONE_CODE
-                , ORG_ETC
-                , CREATE_DATE
-                , CREATE_USER_ID
-                , UPDATE_DATE
-                , UPDATE_USER_ID
-                , USE_YN
-            )
-        VALUES
-            (
-             #{orgId}
-            , #{orgName}
-            , #{orgAddress}
-            , #{orgNumber}
-            , #{orgPaxNumber}
-            , #{orgEmail}
-            , #{orgAddressDetail}
-            , #{orgZoneCode}
-            , #{orgEtc}
-            , NOW()
-            , #{userId}
-            , NOW()
-            , #{userId}
-            , 'Y'
-            )
+        ( ORG_ID
+        , ORG_NAME
+        , ORG_ADDRESS
+        , ORG_NUMBER
+        , ORG_PAX_NUMBER
+        , ORG_EMAIL
+        , ORG_ADDRESS_DETAIL
+        , ORG_ZONE_CODE
+        , ORG_ETC
+        , CREATE_DATE
+        , CREATE_USER_ID
+        , UPDATE_DATE
+        , UPDATE_USER_ID
+        , USE_YN)
+        VALUES ( #{orgId}
+               , #{orgName}
+               , #{orgAddress}
+               , #{orgNumber}
+               , #{orgPaxNumber}
+               , #{orgEmail}
+               , #{orgAddressDetail}
+               , #{orgZoneCode}
+               , #{orgEtc}
+               , NOW()
+               , #{userId}
+               , NOW()
+               , #{userId}
+               , 'Y')
     </insert>
 
     <delete id="deleteOrg" parameterType="java.lang.String">
         UPDATE gss.TB_ORGANIZATION
-        SET
-            USE_YN ='N'
-        WHERE
-            ORG_ID = #{orgId}
+        SET USE_YN ='N'
+        WHERE ORG_ID = #{orgId}
     </delete>
 
-    <select id ="selectOrgDetail" parameterType="java.lang.String" resultType="com.hgb.gssbe.org.model.Org">
-        SELECT
-            ORG_ID
-            ,ORG_NAME
-            ,ORG_ADDRESS
-            ,ORG_NUMBER
-            ,ORG_PAX_NUMBER
-            ,ORG_EMAIL
-            ,ORG_ADDRESS_DETAIL
-            ,ORG_ZONE_CODE
-            ,ORG_ETC
-        FROM
-            gss.TB_ORGANIZATION
-        WHERE
-            ORG_ID = #{orgId}
+    <select id="selectOrgDetail" parameterType="java.lang.String" resultType="com.hgb.gssbe.org.model.Org">
+        SELECT ORG_ID
+             , ORG_NAME
+             , ORG_ADDRESS
+             , ORG_NUMBER
+             , ORG_PAX_NUMBER
+             , ORG_EMAIL
+             , ORG_ADDRESS_DETAIL
+             , ORG_ZONE_CODE
+             , ORG_ETC
+        FROM gss.TB_ORGANIZATION
+        WHERE ORG_ID = #{orgId}
 
     </select>
 
-    <update id = "modifyOrg" parameterType="com.hgb.gssbe.org.model.Org">
+    <update id="modifyOrg" parameterType="com.hgb.gssbe.org.model.Org">
         UPDATE gss.TB_ORGANIZATION
-        SET
-            ORG_NAME = #{orgName}
-            , ORG_ADDRESS = #{orgAddress}
-            , ORG_NUMBER = #{orgNumber}
-            , ORG_PAX_NUMBER = #{orgPaxNumber}
-            , ORG_EMAIL = #{orgEmail}
-            , ORG_ADDRESS_DETAIL = #{orgAddressDetail}
-            , ORG_ZONE_CODE = #{orgZoneCode}
-            , ORG_ETC = #{orgEtc}
-            , UPDATE_DATE = NOW()
-            , UPDATE_USER_ID = #{userId}
-        WHERE
-            ORG_ID = #{orgId}
+        SET ORG_NAME           = #{orgName}
+          , ORG_ADDRESS        = #{orgAddress}
+          , ORG_NUMBER         = #{orgNumber}
+          , ORG_PAX_NUMBER     = #{orgPaxNumber}
+          , ORG_EMAIL          = #{orgEmail}
+          , ORG_ADDRESS_DETAIL = #{orgAddressDetail}
+          , ORG_ZONE_CODE      = #{orgZoneCode}
+          , ORG_ETC            = #{orgEtc}
+          , UPDATE_DATE        = NOW()
+          , UPDATE_USER_ID     = #{userId}
+        WHERE ORG_ID = #{orgId}
     </update>
 </mapper>
