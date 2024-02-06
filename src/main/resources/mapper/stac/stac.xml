@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace = "com.hgb.gssbe.stac.dao.StacDao">
+<mapper namespace="com.hgb.gssbe.stac.dao.StacDao">
 
     <resultMap id="readStac" type="com.hgb.gssbe.stac.model.StacMonth">
         <result column="MONTH_PART" property="month" javaType="string"/>
@@ -21,76 +21,73 @@
     </resultMap>
 
 
-
     <select id="selectStacProductList" parameterType="com.hgb.gssbe.stac.model.StacReq"
             resultMap="readStac">
         SELECT
-            DATE_FORMAT(TOR.ORDER_DEAD_LINE_DATE,'%m월') MONTH_PART
-            , TOR.ORDER_ID
-            , TOR.ORDER_ORDERING_DATE
-            , TOR.ORDER_DEAD_LINE_DATE
-            , TP.PRODUCT_ID
-            , TP.PRODUCT_STYLE_NO
-            , TP.PRODUCT_ITEM
-            , TP.PRODUCT_SIZE
-            , TP.PRODUCT_COLOR
-            , TP.PRODUCT_QTY
-            , TP.PRODUCT_PRICE
-            , TP.PRODUCT_ETC
-            , CAST(TP.PRODUCT_PRICE as unsigned) * cast(TP.PRODUCT_QTY as unsigned) * 1.1 TOTAL_PRD_PRC
+        DATE_FORMAT(TOR.ORDER_DEAD_LINE_DATE,'%m월') MONTH_PART
+        , TOR.ORDER_ID
+        , TOR.ORDER_ORDERING_DATE
+        , TOR.ORDER_DEAD_LINE_DATE
+        , TP.PRODUCT_ID
+        , TP.PRODUCT_STYLE_NO
+        , TP.PRODUCT_ITEM
+        , TP.PRODUCT_SIZE
+        , TP.PRODUCT_COLOR
+        , TP.PRODUCT_QTY
+        , TP.PRODUCT_PRICE
+        , TP.PRODUCT_ETC
+        , CAST(TP.PRODUCT_PRICE as unsigned) * cast(TP.PRODUCT_QTY as unsigned) * 1.1 TOTAL_PRD_PRC
         FROM
-            TB_PRODUCT TP
-                LEFT JOIN TB_ORDER TOR
-                          ON TOR.ORDER_ID = TP.ORDER_ID
+        TB_PRODUCT TP
+        LEFT JOIN TB_ORDER TOR
+        ON TOR.ORDER_ID = TP.ORDER_ID
         WHERE
-            1=1
-            AND
-            TP.USE_YN = 'Y'
-            AND
-            TOR.ORDER_ORG_ID = #{orgId}
-            AND
-            DATE_FORMAT(TOR.ORDER_DEAD_LINE_DATE,'%Y') = #{year}
-            <if test = 'startMonth != null and startMonth != ""'>
-                AND DATE_FORMAT(TOR.ORDER_DEAD_LINE_DATE,'%m') >= #{startMonth}
-            </if>
-            <if test = 'endMonth != null and endMonth != ""'>
-                <![CDATA[AND DATE_FORMAT(TOR.ORDER_DEAD_LINE_DATE,'%m') <= #{endMonth}]]>
-            </if>
-        ORDER BY TOR.ORDER_ORDERING_DATE, TP.PRODUCT_STYLE_NO
+        1=1
+        AND
+        TP.USE_YN = 'Y'
+        AND
+        TOR.ORDER_ORG_ID = #{orgId}
+        AND
+        DATE_FORMAT(TOR.ORDER_DEAD_LINE_DATE,'%Y') = #{year}
+        <if test='startMonth != null and startMonth != ""'>
+            AND DATE_FORMAT(TOR.ORDER_DEAD_LINE_DATE,'%m') >= #{startMonth}
+        </if>
+        <if test='endMonth != null and endMonth != ""'>
+            <![CDATA[AND DATE_FORMAT(TOR.ORDER_DEAD_LINE_DATE,'%m') <= #{endMonth}]]>
+        </if>
+        ORDER BY TOR.ORDER_ORDERING_DATE, TOR.ORDER_ID, TP.PRODUCT_SORT
     </select>
 
-    <select id ="selectStacOrg" parameterType="com.hgb.gssbe.stac.model.StacReq" resultType="com.hgb.gssbe.stac.model.StacOrg">
+    <select id="selectStacOrg" parameterType="com.hgb.gssbe.stac.model.StacReq"
+            resultType="com.hgb.gssbe.stac.model.StacOrg">
         SELECT
-            TON.ORG_ID
-            , TON.ORG_NAME
+        TON.ORG_ID
+        , TON.ORG_NAME
         FROM
-            TB_ORDER TOR
-                LEFT JOIN TB_ORGANIZATION TON
-                          ON TON.ORG_ID = TOR.ORDER_ORG_ID
+        TB_ORDER TOR
+        LEFT JOIN TB_ORGANIZATION TON
+        ON TON.ORG_ID = TOR.ORDER_ORG_ID
         WHERE
-            1=1
-            AND
-            TOR.ORDER_ORG_ID = #{orgId}
-            AND
-            TOR.USE_YN = 'Y'
-            AND
-            DATE_FORMAT(TOR.ORDER_DEAD_LINE_DATE,'%Y') = #{year}
-            <if test = 'startMonth != null and startMonth != ""'>
-                AND DATE_FORMAT(TOR.ORDER_DEAD_LINE_DATE,'%m') >= #{startMonth}
-            </if>
-            <if test = 'endMonth != null and endMonth != ""'>
-                <![CDATA[AND DATE_FORMAT(TOR.ORDER_DEAD_LINE_DATE,'%m') <= #{endMonth}]]>
-            </if>
+        1=1
+        AND
+        TOR.ORDER_ORG_ID = #{orgId}
+        AND
+        TOR.USE_YN = 'Y'
+        AND
+        DATE_FORMAT(TOR.ORDER_DEAD_LINE_DATE,'%Y') = #{year}
+        <if test='startMonth != null and startMonth != ""'>
+            AND DATE_FORMAT(TOR.ORDER_DEAD_LINE_DATE,'%m') >= #{startMonth}
+        </if>
+        <if test='endMonth != null and endMonth != ""'>
+            <![CDATA[AND DATE_FORMAT(TOR.ORDER_DEAD_LINE_DATE,'%m') <= #{endMonth}]]>
+        </if>
         GROUP BY TON.ORG_ID, TON.ORG_NAME
     </select>
 
     <update id="modifyProduct" parameterType="com.hgb.gssbe.stac.model.StacProductReq">
         UPDATE TB_PRODUCT
-        SET
-            PRODUCT_PRICE = #{productPrice}
-        WHERE
-            1=1
-            AND
-            PRODUCT_ID = #{productId}
+        SET PRODUCT_PRICE = #{productPrice}
+        WHERE 1 = 1
+          AND PRODUCT_ID = #{productId}
     </update>
 </mapper>
