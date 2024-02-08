@@ -52,8 +52,8 @@ public class FileSvc {
         OPCPackage opcPackage = OPCPackage.open(file.getInputStream());
         XSSFWorkbook workbook = new XSSFWorkbook(opcPackage);
         int sheetCount = workbook.getNumberOfSheets();
-        for(int i = 0 ; i < sheetCount; i ++){
-            Row row ;
+        for (int i = 0; i < sheetCount; i++) {
+            Row row;
             FileOrderInfo info = new FileOrderInfo();
             XSSFSheet sheet = workbook.getSheetAt(i);
 
@@ -64,7 +64,7 @@ public class FileSvc {
                 isSave = false;
                 res.setFileName(file.getOriginalFilename());
                 res.setResultCode("fail");
-                res.setResultMessage(format("(%s) 이름은 존재하지 않습니다." , orgTmpName));
+                res.setResultMessage(format("(%s) 이름은 존재하지 않습니다.", orgTmpName));
                 res.setHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR);
                 break;
             }
@@ -86,57 +86,57 @@ public class FileSvc {
 
             List<FileProduct> products = new ArrayList<>();
 
-            while(true){
-                int count = 0 ;
-                if(currentRow >= 50){
+            while (true) {
+                int count = 0;
+                if (currentRow >= 50) {
                     break;
                 }
                 FileProduct dto = new FileProduct();
                 row = sheet.getRow(currentRow);
 
-                String styleNo =  row.getCell(Excel.STYLE_NO.getCell()).toString();
-                if("합  계".equals(styleNo)){
+                String styleNo = row.getCell(Excel.STYLE_NO.getCell()).toString();
+                if ("합  계".equals(styleNo)) {
                     break;
                 }
-                if(StringUtils.isEmpty(styleNo)){
+                if (StringUtils.isEmpty(styleNo)) {
                     styleNo = tmpStyleNo;
                     count++;
-                }else{
+                } else {
                     tmpStyleNo = styleNo;
                 }
 
                 String item = row.getCell(Excel.ITEM.getCell()).toString();
-                if(StringUtils.isEmpty(item)){
+                if (StringUtils.isEmpty(item)) {
                     item = tmpItem;
                     count++;
-                }else{
+                } else {
                     tmpItem = item;
                 }
 
                 String size = row.getCell(Excel.SIZE.getCell()).toString();
-                if(StringUtils.isEmpty(size)){
+                if (StringUtils.isEmpty(size)) {
                     size = tmpSize;
                     count++;
-                }else{
+                } else {
                     tmpSize = size;
                 }
 
                 String color = row.getCell(Excel.COLOR.getCell()).toString();
-                if(StringUtils.isEmpty(color)){
+                if (StringUtils.isEmpty(color)) {
                     color = tmpColor;
                     count++;
-                }else{
+                } else {
                     tmpColor = color;
                 }
 
                 String qty = row.getCell(Excel.QTY.getCell()).toString();
-                if(StringUtils.isEmpty(qty)){
+                if (StringUtils.isEmpty(qty)) {
                     qty = tmpQty;
                     count++;
-                }else{
+                } else {
                     tmpQty = qty;
                 }
-                if (count != 5){
+                if (count != 5) {
                     dto.setColor(color);
                     dto.setQty(qty);
                     dto.setItem(item);
@@ -151,16 +151,16 @@ public class FileSvc {
             list.add(info);
         }
 
-        if(isSave) {
+        if (isSave) {
             res.setHttpStatus(HttpStatus.OK);
             fileDao.insertFile(fileEnroll);
 
             File path = new File(FilePath.TMP_PATH.getPath());
-            if(!path.exists()){
+            if (!path.exists()) {
                 path.mkdirs();
             }
 
-            File fileClass = new File(FilePath.TMP_PATH.getPath() + "\\" + fileId +".xlsx");
+            File fileClass = new File(FilePath.TMP_PATH.getPath() + "\\" + fileId + ".xlsx");
 
             FileOutputStream out = new FileOutputStream(fileClass);
             workbook.write(out);
@@ -171,11 +171,11 @@ public class FileSvc {
             res.setFileId(fileId);
             res.setResultMessage("성공");
 
-            for (FileOrderInfo fileOrderInfo : list){
+            for (FileOrderInfo fileOrderInfo : list) {
                 fileOrderInfo.setUserId(userId);
                 fileOrderInfo.setFileId(fileId);
                 fileDao.insertOrder(fileOrderInfo);
-                for(FileProduct dto : fileOrderInfo.getProducts()){
+                for (FileProduct dto : fileOrderInfo.getProducts()) {
                     dto.setOrderId(fileOrderInfo.getOrderId());
                     dto.setUserId(userId);
                     fileDao.insertProduct(dto);
@@ -185,7 +185,7 @@ public class FileSvc {
         return res;
     }
 
-    public FileResList selectFiles(FileReq fileReq){
+    public FileResList selectFiles(FileReq fileReq) {
         log.info(fileReq.toStringJson());
         FileResList result = new FileResList();
 
@@ -198,7 +198,7 @@ public class FileSvc {
         return result;
     }
 
-    public FileDetailRes selectFileDetail(String fileId){
+    public FileDetailRes selectFileDetail(String fileId) {
         FileDetailRes result = fileDao.selectFileDetail(fileId);
         List<FileDetailOrderRes> orders = fileDao.selectFileDetailOrders(fileId);
         result.setList(orders);
@@ -206,8 +206,8 @@ public class FileSvc {
     }
 
     @Transactional
-    public void deleteFile(List<String> fileIds){
-        for(String fileId : fileIds){
+    public void deleteFile(List<String> fileIds) {
+        for (String fileId : fileIds) {
             fileDao.deleteProduct(fileId);
             fileDao.deleteOrder(fileId);
             fileDao.deleteFile(fileId);

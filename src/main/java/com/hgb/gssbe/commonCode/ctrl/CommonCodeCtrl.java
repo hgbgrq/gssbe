@@ -18,9 +18,9 @@ public class CommonCodeCtrl {
     private CommonCodeSvc commonCodeSvc;
 
     @GetMapping("/{commonGroupId}")
-    public ResponseEntity<CommonCodeRes> getCommonCode (@PathVariable String commonGroupId){
+    public ResponseEntity<CommonCodeRes> getCommonCode(@PathVariable String commonGroupId) {
         CommonCodeRes commonCodeRes = commonCodeSvc.getCommonCode(commonGroupId);
-        return new ResponseEntity<>(commonCodeRes , HttpStatus.OK);
+        return new ResponseEntity<>(commonCodeRes, HttpStatus.OK);
     }
 
 

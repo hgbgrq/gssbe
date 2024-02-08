@@ -1,5 +1,6 @@
 package com.hgb.gssbe.login.dao;
 
+import com.hgb.gssbe.login.model.TokenStore;
 import com.hgb.gssbe.login.model.UserInfo;
 import com.hgb.gssbe.login.model.UserLogin;
 import org.apache.ibatis.annotations.Mapper;
@@ -13,4 +14,7 @@ public interface LoginDao {
 
     void insertUserInfo(UserInfo userInfo);
 
+    void insertToken(TokenStore tokenStore);
+
+    void preTokenDelete(String userId);
 }

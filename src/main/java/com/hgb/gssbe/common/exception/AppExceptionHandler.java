@@ -13,8 +13,9 @@ public class AppExceptionHandler {
 
     @Autowired
     ExceptionInfoConfig exceptionInfoConfig;
+
     @ExceptionHandler(GssException.class)
-    public ResponseEntity<GssResponse> GssExceptionHandler(GssException gssException){
+    public ResponseEntity<GssResponse> GssExceptionHandler(GssException gssException) {
         GssResponse result = exceptionInfoConfig.getResultDto(gssException.getYmlKey());
         return new ResponseEntity<>(result, HttpStatus.OK);
     }

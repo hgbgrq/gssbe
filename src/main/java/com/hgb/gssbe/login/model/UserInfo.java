@@ -2,7 +2,7 @@ package com.hgb.gssbe.login.model;
 
 import lombok.Data;
 
-import java.util.ArrayList;
+import java.util.List;
 
 @Data
 public class UserInfo {
@@ -19,7 +19,7 @@ public class UserInfo {
 
     private String userEmail;
 
-    private ArrayList<UserGrantedAuthority> grantedAuthorityList;
+    private List<UserGrantedAuthority> grantedAuthorityList;
 
     private String bCryptPassword;
 }

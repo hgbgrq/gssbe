@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class UserGrantedAuthority {
 
-    private String authorityCode;
+    private String authId;
 }

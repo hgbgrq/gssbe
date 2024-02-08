@@ -15,7 +15,7 @@ public class CommonCodeSvc {
     @Autowired
     private CommonCodeDao commonCodeDao;
 
-    public CommonCodeRes getCommonCode(String commonGroupId){
+    public CommonCodeRes getCommonCode(String commonGroupId) {
         List<CommonCode> commonCodeList = commonCodeDao.selectCommonCode(commonGroupId);
         return CommonCodeRes.builder()
                 .commonCodeList(commonCodeList).build();

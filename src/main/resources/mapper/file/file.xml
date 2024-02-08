@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace = "com.hgb.gssbe.file.dao.FileDao">
+<mapper namespace="com.hgb.gssbe.file.dao.FileDao">
 
     <resultMap id="orderFileDetailMap" type="com.hgb.gssbe.file.model.FileDetailOrderRes">
         <result column="ORG_ID" property="orgId" javaType="string"/>
@@ -18,192 +18,162 @@
         </collection>
     </resultMap>
 
-    <select id = "selectOrgInfos" parameterType="java.lang.String"
+    <select id="selectOrgInfos" parameterType="java.lang.String"
             resultType="com.hgb.gssbe.file.model.FileOrganization">
-        SELECT
-            ORG_ID
-            , ORG_NAME
-        FROM
-            gss.TB_ORGANIZATION
-        WHERE
-            ORG_NAME = #{orgTmpNm}
-            AND
-            USE_YN = 'Y'
+        SELECT ORG_ID
+             , ORG_NAME
+        FROM gss.TB_ORGANIZATION
+        WHERE ORG_NAME = #{orgTmpNm}
+          AND USE_YN = 'Y'
     </select>
 
     <insert id="insertFile" parameterType="com.hgb.gssbe.file.model.FileEnroll">
-        INSERT INTO gss.TB_FILE(
-             FILE_ID
-            , FILE_NAME
-            , FILE_PATH
-            , USE_YN
-            , CREATE_DATE
-            , CREATE_USER_ID
-            , UPDATE_DATE
-            , UPDATE_USER_ID
-        )
-        VALUES(
-             #{fileId}
-            , #{fileName}
-            , #{filePath}
-            , 'Y'
-            , NOW()
-            , 'test'
-            , NOW()
-            , 'test'
-            )
+        INSERT INTO gss.TB_FILE( FILE_ID
+                               , FILE_NAME
+                               , FILE_PATH
+                               , USE_YN
+                               , CREATE_DATE
+                               , CREATE_USER_ID
+                               , UPDATE_DATE
+                               , UPDATE_USER_ID)
+        VALUES ( #{fileId}
+               , #{fileName}
+               , #{filePath}
+               , 'Y'
+               , NOW()
+               , 'test'
+               , NOW()
+               , 'test')
     </insert>
 
-    <select id = "selectFiles" parameterType="com.hgb.gssbe.file.model.FileReq" resultType="com.hgb.gssbe.file.model.FileRes">
+    <select id="selectFiles" parameterType="com.hgb.gssbe.file.model.FileReq"
+            resultType="com.hgb.gssbe.file.model.FileRes">
         SELECT
-            FILE_ID
-            , FILE_NAME
-            , CREATE_DATE CREATE_DATE
-            , CREATE_USER_ID CREATE_USER_ID
+        FILE_ID
+        , FILE_NAME
+        , CREATE_DATE CREATE_DATE
+        , CREATE_USER_ID CREATE_USER_ID
         FROM
-            gss.TB_FILE
+        gss.TB_FILE
         WHERE
-            1=1
+        1=1
+        AND
+        USE_YN = 'Y'
+        AND
+        FILE_NAME LIKE CONCAT ('%', #{keyWord}, '%')
+        <if test='startDate != null and startDate != ""'>
             AND
-            USE_YN = 'Y'
+            TO_TIMESTAMP(TO_CHAR(CREATE_DATE,'YYYY-MM-DD'), 'YYYY-MM-DD') >= TO_TIMESTAMP(#{startDate}, 'YYYY-MM-DD')
             AND
-            FILE_NAME LIKE CONCAT ('%', #{keyWord}, '%')
-            <if test ='startDate != null and startDate != ""'>
-                AND
-                TO_TIMESTAMP(TO_CHAR(CREATE_DATE,'YYYY-MM-DD'), 'YYYY-MM-DD') >= TO_TIMESTAMP(#{startDate}, 'YYYY-MM-DD')
-                AND
-                <![CDATA[TO_TIMESTAMP(TO_CHAR(CREATE_DATE,'YYYY-MM-DD'), 'YYYY-MM-DD') <= TO_TIMESTAMP(#{endDate}, 'YYYY-MM-DD')]]>
-            </if>
+            <![CDATA[TO_TIMESTAMP(TO_CHAR(CREATE_DATE,'YYYY-MM-DD'), 'YYYY-MM-DD') <= TO_TIMESTAMP(#{endDate}, 'YYYY-MM-DD')]]>
+        </if>
         ORDER BY CREATE_DATE DESC
         LIMIT #{size} OFFSET #{row}
     </select>
 
     <select id="selectFilesCount" resultType="java.lang.Integer">
-        SELECT
-            COUNT(1)
-        FROM
-            gss.TB_FILE
-        WHERE
-            1=1
-            AND
-            USE_YN = 'Y'
+        SELECT COUNT(1)
+        FROM gss.TB_FILE
+        WHERE 1 = 1
+          AND USE_YN = 'Y'
     </select>
 
     <select id="selectFileDetail" parameterType="java.lang.String"
             resultType="com.hgb.gssbe.file.model.FileDetailRes">
-        SELECT
-            FILE_ID
-            , FILE_NAME
-        FROM
-            gss.TB_FILE
-        WHERE
-            FILE_ID = #{fileId}
+        SELECT FILE_ID
+             , FILE_NAME
+        FROM gss.TB_FILE
+        WHERE FILE_ID = #{fileId}
     </select>
 
     <select id="selectFileDetailOrders" parameterType="java.lang.String"
             resultMap="orderFileDetailMap">
-        SELECT
-            TOR.ORDER_ORG_ID AS ORG_ID
-             , TON.ORG_NAME  AS ORG_NAME
-             , TOR.ORDER_ORDERING_DATE AS ORD_ORDERING_DATE
+        SELECT TOR.ORDER_ORG_ID         AS ORG_ID
+             , TON.ORG_NAME             AS ORG_NAME
+             , TOR.ORDER_ORDERING_DATE  AS ORD_ORDERING_DATE
              , TOR.ORDER_DEAD_LINE_DATE AS ORD_DEAD_LINE_DATE
-             , TP.PRODUCT_STYLE_NO AS PRD_STYLE_NO
-             , TP.PRODUCT_ITEM AS PRD_ITEM
-             , TP.PRODUCT_SIZE AS PRD_SIZE
-             , TP.PRODUCT_COLOR AS PRD_COLOR
-             , TP.PRODUCT_QTY  AS PRD_QTY
-             , TP.PRODUCT_PRICE AS PRD_ETC
-             , TP.PRODUCT_ETC AS prd_etc
-        FROM
-            gss.TB_ORDER TOR
-                LEFT JOIN gss.TB_ORGANIZATION TON
-                          ON TOR.ORDER_ORG_ID = TON.ORG_ID
-                LEFT JOIN gss.TB_PRODUCT TP
-                          ON TP.ORDER_ID = TOR.ORDER_ID
-        WHERE
-            TOR.FILE_ID = #{fileId};
+             , TP.PRODUCT_STYLE_NO      AS PRD_STYLE_NO
+             , TP.PRODUCT_ITEM          AS PRD_ITEM
+             , TP.PRODUCT_SIZE          AS PRD_SIZE
+             , TP.PRODUCT_COLOR         AS PRD_COLOR
+             , TP.PRODUCT_QTY           AS PRD_QTY
+             , TP.PRODUCT_PRICE         AS PRD_ETC
+             , TP.PRODUCT_ETC           AS prd_etc
+        FROM gss.TB_ORDER TOR
+                 LEFT JOIN gss.TB_ORGANIZATION TON
+                           ON TOR.ORDER_ORG_ID = TON.ORG_ID
+                 LEFT JOIN gss.TB_PRODUCT TP
+                           ON TP.ORDER_ID = TOR.ORDER_ID
+        WHERE TOR.FILE_ID = #{fileId};
     </select>
 
-    <insert id="insertOrder" parameterType="com.hgb.gssbe.file.model.FileOrderInfo" useGeneratedKeys="true" keyProperty ="orderId" keyColumn="order_id">
+    <insert id="insertOrder" parameterType="com.hgb.gssbe.file.model.FileOrderInfo" useGeneratedKeys="true"
+            keyProperty="orderId" keyColumn="order_id">
         INSERT INTO gss.TB_ORDER
-            (
-                   FILE_ID
-                 , ORDER_ORG_ID
-                 , ORDER_ORDERING_DATE
-                 , ORDER_DEAD_LINE_DATE
-                 , USE_YN
-                 , CREATE_DATE
-                 , CREATE_USER_ID
-                 , UPDATE_DATE
-                 , UPDATE_USER_ID
-            )
-        VALUES (
-                   #{fileId}
+        ( FILE_ID
+        , ORDER_ORG_ID
+        , ORDER_ORDERING_DATE
+        , ORDER_DEAD_LINE_DATE
+        , USE_YN
+        , CREATE_DATE
+        , CREATE_USER_ID
+        , UPDATE_DATE
+        , UPDATE_USER_ID)
+        VALUES ( #{fileId}
                , #{orgId}
-               , TO_TIMESTAMP(#{orderingDaTe},'YYYY년MM월DD일')
-               , TO_TIMESTAMP(#{deadLineDate},'YYYY년MM월DD일')
+               , TO_TIMESTAMP(#{orderingDaTe}, 'YYYY년MM월DD일')
+               , TO_TIMESTAMP(#{deadLineDate}, 'YYYY년MM월DD일')
+               , 'Y'
+               , NOW()
+               , #{userId}
+               , NOW()
+               , #{userId})
+    </insert>
+
+    <insert id="insertProduct" parameterType="com.hgb.gssbe.file.model.FileOrderInfo">
+        INSERT INTO gss.TB_PRODUCT ( ORDER_ID
+                                   , PRODUCT_STYLE_NO
+                                   , PRODUCT_ITEM
+                                   , PRODUCT_SIZE
+                                   , PRODUCT_COLOR
+                                   , PRODUCT_QTY
+                                   , USE_YN
+                                   , CREATE_DATE
+                                   , CREATE_USER_ID
+                                   , UPDATE_DATE
+                                   , UPDATE_USER_ID
+                                   , IS_PAYMENT)
+        VALUES ( #{orderId}
+               , #{styleNo}
+               , #{item}
+               , #{size}
+               , #{color}
+               , #{qty}
                , 'Y'
                , NOW()
                , #{userId}
                , NOW()
                , #{userId}
-               )
-    </insert>
-
-    <insert id = "insertProduct" parameterType="com.hgb.gssbe.file.model.FileOrderInfo">
-        INSERT INTO gss.TB_PRODUCT (
-             ORDER_ID
-           , PRODUCT_STYLE_NO
-           , PRODUCT_ITEM
-           , PRODUCT_SIZE
-           , PRODUCT_COLOR
-           , PRODUCT_QTY
-           , USE_YN
-           , CREATE_DATE
-           , CREATE_USER_ID
-           , UPDATE_DATE
-           , UPDATE_USER_ID
-           , IS_PAYMENT
-        )VALUES
-             (
-                #{orderId}
-             , #{styleNo}
-             , #{item}
-             , #{size}
-             , #{color}
-             , #{qty}
-             , 'Y'
-             , NOW()
-             , #{userId}
-             , NOW()
-             , #{userId}
-             , 'N'
-             )
+               , 'N')
     </insert>
 
     <update id="deleteFile" parameterType="java.lang.String">
         UPDATE gss.TB_FILE
-        SET
-            USE_YN = 'N'
-        WHERE
-            FILE_ID = #{fileId}
+        SET USE_YN = 'N'
+        WHERE FILE_ID = #{fileId}
     </update>
 
-    <update id = "deleteProduct" parameterType="java.lang.String">
+    <update id="deleteProduct" parameterType="java.lang.String">
         UPDATE gss.TB_PRODUCT TP
-        SET
-            USE_YN = 'N'
-        FROM (SELECT ORDER_ID FROM gss.TB_ORDER WHERE FILE_ID = #{fileId}) AS TB
+        SET USE_YN = 'N' FROM (SELECT ORDER_ID FROM gss.TB_ORDER WHERE FILE_ID = #{fileId}) AS TB
         WHERE
             TP.ORDER_ID = TB.ORDER_ID
     </update>
 
     <update id="deleteOrder" parameterType="java.lang.String">
         UPDATE gss.TB_ORDER
-        SET
-            USE_YN = 'N'
-        WHERE
-            FILE_ID = #{fileId}
+        SET USE_YN = 'N'
+        WHERE FILE_ID = #{fileId}
     </update>
 
 </mapper>

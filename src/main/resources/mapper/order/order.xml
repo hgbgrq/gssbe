@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace = "com.hgb.gssbe.order.dao.OrderDao">
+<mapper namespace="com.hgb.gssbe.order.dao.OrderDao">
 
     <resultMap id="orderDetailMap" type="com.hgb.gssbe.order.model.OrderDetail">
         <result column="ORDER_ID" property="orderId" javaType="string"/>
@@ -10,7 +10,7 @@
         <result column="ORDER_DEAD_LINE_DATE" property="orderDeadLineDate" javaType="string"/>
         <collection property="productList" ofType="com.hgb.gssbe.order.model.OrderProductRes">
             <result column="PRODUCT_ID" property="productId"/>
-            <result column="PRODUCT_STYLE_NO" property="productStyleNo" />
+            <result column="PRODUCT_STYLE_NO" property="productStyleNo"/>
             <result column="PRODUCT_ITEM" property="productItem" javaType="string"/>
             <result column="PRODUCT_SIZE" property="productSize" javaType="string"/>
             <result column="PRODUCT_COLOR" property="productColor" javaType="string"/>
@@ -20,202 +20,180 @@
         </collection>
     </resultMap>
 
-    <select id = "selectOrders" resultType="com.hgb.gssbe.order.model.OrderRes"
+    <select id="selectOrders" resultType="com.hgb.gssbe.order.model.OrderRes"
             parameterType="com.hgb.gssbe.order.model.OrderReq">
         SELECT
-            TB.ORDER_ID
-            , TB.ORDER_ORDERING_DATE
-            , TB.ORDER_DEAD_LINE_DATE
-            , TB.ORG_NAME
-            , TB.ORDER_STYLE_NOS
+        TB.ORDER_ID
+        , TB.ORDER_ORDERING_DATE
+        , TB.ORDER_DEAD_LINE_DATE
+        , TB.ORG_NAME
+        , TB.ORDER_STYLE_NOS
         FROM (
-            SELECT
-                TOR.ORDER_ID
-                , TOR.ORDER_ORDERING_DATE
-                , TOR.ORDER_DEAD_LINE_DATE
-                , TON.ORG_NAME
-                , GROUP_CONCAT(DISTINCT TPT.PRODUCT_STYLE_NO ORDER BY TPT.PRODUCT_STYLE_NO SEPARATOR ', ') ORDER_STYLE_NOS
-            FROM
-                TB_ORDER TOR
-                LEFT JOIN TB_PRODUCT TPT
-                ON TOR.ORDER_ID = TPT.ORDER_ID
-                LEFT JOIN TB_ORGANIZATION TON
-                ON TON.ORG_ID = TOR.ORDER_ORG_ID
-            WHERE
-            1=1
-            AND
-            TOR.USE_YN = 'Y'
-            <if test='orgId != null and orgId != ""'>AND TOR.ORDER_ORG_ID = #{orgId}
-            </if>
-            <if test = '
+        SELECT
+        TOR.ORDER_ID
+        , TOR.ORDER_ORDERING_DATE
+        , TOR.ORDER_DEAD_LINE_DATE
+        , TON.ORG_NAME
+        , GROUP_CONCAT(DISTINCT TPT.PRODUCT_STYLE_NO ORDER BY TPT.PRODUCT_STYLE_NO SEPARATOR ', ') ORDER_STYLE_NOS
+        FROM
+        TB_ORDER TOR
+        LEFT JOIN TB_PRODUCT TPT
+        ON TOR.ORDER_ID = TPT.ORDER_ID
+        LEFT JOIN TB_ORGANIZATION TON
+        ON TON.ORG_ID = TOR.ORDER_ORG_ID
+        WHERE
+        1=1
+        AND
+        TOR.USE_YN = 'Y'
+        <if test='orgId != null and orgId != ""'>AND TOR.ORDER_ORG_ID = #{orgId}
+        </if>
+        <if test='
             startDate !=null and startDate != ""'>AND TOR.ORDER_ORDERING_DATE >= #{startDate}
-            </if>
-                <if test = 'endDate !=null and endDate != ""'>
-                    <![CDATA[ AND TOR.ORDER_ORDERING_DATE <= #{endDate} ]]>
-                </if>
-            GROUP BY TOR.ORDER_ID , TOR.ORDER_ORDERING_DATE, TOR.ORDER_DEAD_LINE_DATE , TON.ORG_NAME
+        </if>
+        <if test='endDate !=null and endDate != ""'>
+            <![CDATA[ AND TOR.ORDER_ORDERING_DATE <= #{endDate} ]]>
+        </if>
+        GROUP BY TOR.ORDER_ID , TOR.ORDER_ORDERING_DATE, TOR.ORDER_DEAD_LINE_DATE , TON.ORG_NAME
         ) TB
         ORDER BY TB.ORG_NAME, TB.ORDER_ORDERING_DATE , TB.ORDER_DEAD_LINE_DATE
         LIMIT #{pageSize} OFFSET #{offset}
     </select>
 
-    <select id ="selectOrdersCount" resultType="java.lang.Integer"
+    <select id="selectOrdersCount" resultType="java.lang.Integer"
             parameterType="com.hgb.gssbe.order.model.OrderReq">
         SELECT
-            COUNT(TOR.ORDER_ID)
+        COUNT(TOR.ORDER_ID)
         FROM
-            TB_ORDER TOR
+        TB_ORDER TOR
         WHERE
-            1=1
-            AND
-            TOR.USE_YN = 'Y'
-            <if test = 'orgId != null and orgId != ""'>
-                AND TOR.ORDER_ORG_ID = #{orgId}
-            </if>
-            <if test = 'startDate !=null and startDate != ""'>
-                AND TOR.ORDER_ORDERING_DATE >= #{startDate}
-            </if>
-            <if test = 'endDate !=null and endDate != ""'>
-                <![CDATA[ AND TOR.ORDER_ORDERING_DATE <= #{endDate} ]]>
-            </if>
+        1=1
+        AND
+        TOR.USE_YN = 'Y'
+        <if test='orgId != null and orgId != ""'>
+            AND TOR.ORDER_ORG_ID = #{orgId}
+        </if>
+        <if test='startDate !=null and startDate != ""'>
+            AND TOR.ORDER_ORDERING_DATE >= #{startDate}
+        </if>
+        <if test='endDate !=null and endDate != ""'>
+            <![CDATA[ AND TOR.ORDER_ORDERING_DATE <= #{endDate} ]]>
+        </if>
     </select>
 
-    <select id ="selectDetailOrder" parameterType="java.lang.String" resultMap="orderDetailMap">
-        SELECT
-            TOR.ORDER_ID ORDER_ID
-             , TOR.ORDER_ORG_ID ORDER_ORG_ID
-             , ORG.ORG_NAME ORG_NAME
-             , TOR.ORDER_ORDERING_DATE ORDER_ORDERING_DATE
+    <select id="selectDetailOrder" parameterType="java.lang.String" resultMap="orderDetailMap">
+        SELECT TOR.ORDER_ID             ORDER_ID
+             , TOR.ORDER_ORG_ID         ORDER_ORG_ID
+             , ORG.ORG_NAME             ORG_NAME
+             , TOR.ORDER_ORDERING_DATE  ORDER_ORDERING_DATE
              , TOR.ORDER_DEAD_LINE_DATE ORDER_DEAD_LINE_DATE
-             , TP.PRODUCT_ID PRODUCT_ID
-             , TP.PRODUCT_STYLE_NO PRODUCT_STYLE_NO
-             , TP.PRODUCT_ITEM PRODUCT_ITEM
-             , TP.PRODUCT_SIZE PRODUCT_SIZE
-             , TP.PRODUCT_COLOR PRODUCT_COLOR
-             , TP.PRODUCT_QTY PRODUCT_QTY
-             , TP.PRODUCT_PRICE PRODUCT_PRICE
-             , TP.PRODUCT_ETC PRODUCT_ETC
-        FROM
-            TB_ORDER TOR
-                LEFT JOIN TB_PRODUCT TP
-                          ON TP.ORDER_ID = TOR.ORDER_ID
-                LEFT JOIN TB_ORGANIZATION ORG
-                          ON ORG.ORG_ID = TOR.ORDER_ORG_ID
-        WHERE
-            1=1
-            AND
-            TOR.ORDER_ID = #{orderId}
-            AND
-            TOR.USE_YN = 'Y'
-        ORDER BY
-            TP.PRODUCT_SORT
+             , TP.PRODUCT_ID            PRODUCT_ID
+             , TP.PRODUCT_STYLE_NO      PRODUCT_STYLE_NO
+             , TP.PRODUCT_ITEM          PRODUCT_ITEM
+             , TP.PRODUCT_SIZE          PRODUCT_SIZE
+             , TP.PRODUCT_COLOR         PRODUCT_COLOR
+             , TP.PRODUCT_QTY           PRODUCT_QTY
+             , TP.PRODUCT_PRICE         PRODUCT_PRICE
+             , TP.PRODUCT_ETC           PRODUCT_ETC
+        FROM TB_ORDER TOR
+                 LEFT JOIN TB_PRODUCT TP
+                           ON TP.ORDER_ID = TOR.ORDER_ID
+                 LEFT JOIN TB_ORGANIZATION ORG
+                           ON ORG.ORG_ID = TOR.ORDER_ORG_ID
+        WHERE 1 = 1
+          AND TOR.ORDER_ID = #{orderId}
+          AND TOR.USE_YN = 'Y'
+          AND TP.USE_YN ='Y'
+        ORDER BY TP.PRODUCT_SORT
     </select>
 
     <select id="selectOrganizationIdByOrganizationName" parameterType="java.lang.String" resultType="java.lang.String">
-        SELECT
-            ORG_ID
-        FROM
-            TB_ORGANIZATION
-        WHERE
-            ORG_NAME = #{orgName}
+        SELECT ORG_ID
+        FROM TB_ORGANIZATION
+        WHERE ORG_NAME = #{orgName}
     </select>
 
     <insert id="insertOrdering" parameterType="com.hgb.gssbe.order.model.Order">
-        INSERT INTO TB_ORDER(
-                ORDER_ID
-                , ORDER_ORG_ID
-                , USE_YN
-                , ORDER_ORDERING_DATE
-                , ORDER_DEAD_LINE_DATE
-                , CREATE_DATE
-                , CREATE_USER_ID )
-        VALUES (
-                   #{orderId}
-                   , #{orgId}
-                   , 'Y'
-                   , #{orderOrderingDate}
-                   , #{orderDeadLineDate}
-                   , NOW()
-                   , #{createUserId}
-               )
+        INSERT INTO TB_ORDER( ORDER_ID
+                            , ORDER_ORG_ID
+                            , USE_YN
+                            , ORDER_ORDERING_DATE
+                            , ORDER_DEAD_LINE_DATE
+                            , CREATE_DATE
+                            , CREATE_USER_ID)
+        VALUES ( #{orderId}
+               , #{orgId}
+               , 'Y'
+               , #{orderOrderingDate}
+               , #{orderDeadLineDate}
+               , NOW()
+               , #{createUserId})
     </insert>
 
     <insert id="insertOrderProduct" parameterType="com.hgb.gssbe.order.model.OrderProduct">
-        INSERT INTO TB_PRODUCT(
-                PRODUCT_ID
-                , ORDER_ID
-                , PRODUCT_STYLE_NO
-                , PRODUCT_ITEM
-                , PRODUCT_SIZE
-                , PRODUCT_COLOR
-                , PRODUCT_QTY
-                , PRODUCT_PRICE
-                , PRODUCT_ETC
-                , PRODUCT_SORT
-                , USE_YN
-                , CREATE_DATE
-                , CREATE_USER_ID
-        )VALUES (
-                 #{productId}
-                 , #{orderId}
-                 , #{productStyleNo}
-                 , #{productItem}
-                 , #{productSize}
-                 , #{productColor}
-                 , #{productQty}
-                 , #{productPrice}
-                 , #{productEtc}
-                 , #{productSort}
-                 , 'Y'
-                 , NOW()
-                 , #{createUserId}
-                )
+        INSERT INTO TB_PRODUCT( PRODUCT_ID
+                              , ORDER_ID
+                              , PRODUCT_STYLE_NO
+                              , PRODUCT_ITEM
+                              , PRODUCT_SIZE
+                              , PRODUCT_COLOR
+                              , PRODUCT_QTY
+                              , PRODUCT_PRICE
+                              , PRODUCT_ETC
+                              , PRODUCT_SORT
+                              , USE_YN
+                              , CREATE_DATE
+                              , CREATE_USER_ID)
+        VALUES ( #{productId}
+               , #{orderId}
+               , #{productStyleNo}
+               , #{productItem}
+               , #{productSize}
+               , #{productColor}
+               , #{productQty}
+               , #{productPrice}
+               , #{productEtc}
+               , #{productSort}
+               , 'Y'
+               , NOW()
+               , #{createUserId})
     </insert>
 
     <update id="deleteOrder" parameterType="com.hgb.gssbe.order.model.OrderDeleteReq">
         UPDATE TB_ORDER
         SET USE_YN = 'N'
-        WHERE
-            1=1
-            AND
-            ORDER_ID = #{orderId}
+        WHERE 1 = 1
+          AND ORDER_ID = #{orderId}
     </update>
 
     <update id="deleteProduct" parameterType="com.hgb.gssbe.order.model.OrderDeleteReq">
         UPDATE TB_PRODUCT
         SET USE_YN = 'N'
-        WHERE
-            1=1
-            AND
-            ORDER_ID = #{orderId}
+        WHERE 1 = 1
+          AND ORDER_ID = #{orderId}
     </update>
 
     <update id="updateOrder" parameterType="com.hgb.gssbe.order.model.OrderModifyReq">
         UPDATE TB_ORDER
-        SET
-            ORDER_ORG_ID = #{orgId}
-            , ORDER_ORDERING_DATE = #{orderOrderingDate}
-            , ORDER_DEAD_LINE_DATE = #{orderDeadLineDate}
-            , UPDATE_ID = #{updateUserId}
-            , UPDATE_DATE = NOW()
-        WHERE
-            ORDER_ID = #{orderId}
+        SET ORDER_ORG_ID         = #{orgId}
+          , ORDER_ORDERING_DATE  = #{orderOrderingDate}
+          , ORDER_DEAD_LINE_DATE = #{orderDeadLineDate}
+          , UPDATE_ID            = #{updateUserId}
+          , UPDATE_DATE          = NOW()
+        WHERE ORDER_ID = #{orderId}
     </update>
 
     <update id="updateOrderProduct" parameterType="com.hgb.gssbe.order.model.OrderProduct">
         UPDATE TB_PRODUCT
-        SET
-            PRODUCT_STYLE_NO = #{productStyleNo}
-            , PRODUCT_ITEM = #{productItem}
-            , PRODUCT_SIZE = #{productSize}
-            , PRODUCT_COLOR = #{productColor}
-            , PRODUCT_QTY = #{productQty}
-            , PRODUCT_PRICE = #{productPrice}
-            , PRODUCT_ETC = #{productEtc}
-            , UPDATE_DATE = NOW()
-            , UPDATE_ID = #{createUserId}
-        WHERE
-            PRODUCT_ID = #{productId}
+        SET PRODUCT_STYLE_NO = #{productStyleNo}
+          , PRODUCT_ITEM     = #{productItem}
+          , PRODUCT_SIZE     = #{productSize}
+          , PRODUCT_COLOR    = #{productColor}
+          , PRODUCT_QTY      = #{productQty}
+          , PRODUCT_PRICE    = #{productPrice}
+          , PRODUCT_ETC      = #{productEtc}
+          , UPDATE_DATE      = NOW()
+          , UPDATE_ID        = #{createUserId}
+        WHERE PRODUCT_ID = #{productId}
     </update>
 
 </mapper>

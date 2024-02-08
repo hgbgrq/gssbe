@@ -16,11 +16,11 @@ public class StacSvc {
     @Autowired
     private StacDao stacDao;
 
-    public StacRes selectStacList(StacReq stacReq){
+    public StacRes selectStacList(StacReq stacReq) {
         StacOrg stacOrg = stacDao.selectStacOrg(stacReq);
 
-        if (stacOrg == null){
-           return StacRes.builder().build();
+        if (stacOrg == null) {
+            return StacRes.builder().build();
         }
         List<StacMonth> stacMonthList = stacDao.selectStacProductList(stacReq);
 
@@ -30,12 +30,12 @@ public class StacSvc {
                 .stacMonthList(stacMonthList).build();
     }
 
-    public void modifyProduct(StacModifyListReq stacModifyListReq){
-        if(CollectionUtils.isEmpty(stacModifyListReq.getStacProductReqList())){
+    public void modifyProduct(StacModifyListReq stacModifyListReq) {
+        if (CollectionUtils.isEmpty(stacModifyListReq.getStacProductReqList())) {
             throw new GssException("");
         }
-        for (StacModifyReq stacModifyReq: stacModifyListReq.getStacProductReqList()){
-            for(StacProductReq stacProductReq: stacModifyReq.getStacProductList()){
+        for (StacModifyReq stacModifyReq : stacModifyListReq.getStacProductReqList()) {
+            for (StacProductReq stacProductReq : stacModifyReq.getStacProductList()) {
                 stacDao.modifyProduct(stacProductReq);
             }
         }

@@ -20,8 +20,11 @@ public class JwtFilter extends GenericFilterBean {
 
     private final TokenProvider tokenProvider;
 
-    public JwtFilter(TokenProvider tokenProvider){
+    private final SecuritySvc securitySvc;
+
+    public JwtFilter(TokenProvider tokenProvider, SecuritySvc securitySvc) {
         this.tokenProvider = tokenProvider;
+        this.securitySvc = securitySvc;
     }
 
     /**
@@ -58,10 +61,11 @@ public class JwtFilter extends GenericFilterBean {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        String jwt = resolveToken(httpServletRequest);
+        String token = resolveToken(httpServletRequest);
 
-        if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
-            Authentication authentication = tokenProvider.getAuthentication(jwt);
+
+        if (StringUtils.hasText(token) && securitySvc.verifyToken(token, tokenProvider.getUserId(token)) && tokenProvider.validateToken(token)) {
+            Authentication authentication = tokenProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             log.info("토큰 저장 완료");
         } else {
@@ -79,4 +83,5 @@ public class JwtFilter extends GenericFilterBean {
 
         return null;
     }
+
 }

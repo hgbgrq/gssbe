@@ -36,7 +36,7 @@
         , TP.PRODUCT_QTY
         , TP.PRODUCT_PRICE
         , TP.PRODUCT_ETC
-        , CAST(TP.PRODUCT_PRICE as unsigned) * cast(TP.PRODUCT_QTY as unsigned) * 1.1 TOTAL_PRD_PRC
+        , COALESCE (PRICE, CAST(TP.PRODUCT_PRICE as unsigned) * cast(TP.PRODUCT_QTY as unsigned) * 1.1) TOTAL_PRD_PRC
         FROM
         TB_PRODUCT TP
         LEFT JOIN TB_ORDER TOR
@@ -86,7 +86,11 @@
 
     <update id="modifyProduct" parameterType="com.hgb.gssbe.stac.model.StacProductReq">
         UPDATE TB_PRODUCT
-        SET PRODUCT_PRICE = #{productPrice}
+        SET
+            PRODUCT_PRICE = #{productPrice}
+            <if test = "totalPrdPrc != null and totalPrdPrc != ''">
+                PRICE = #{totalPrdPrc}
+            </if>
         WHERE 1 = 1
           AND PRODUCT_ID = #{productId}
     </update>

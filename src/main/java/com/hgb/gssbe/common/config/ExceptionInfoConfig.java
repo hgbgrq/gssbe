@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class ExceptionInfoConfig {
 
-    private final Map<String, Object> exceptionsInfo ;
+    private final Map<String, Object> exceptionsInfo;
 
     public ExceptionInfoConfig(String filePath) {
         YamlMapFactoryBean yaml = new YamlMapFactoryBean();
@@ -19,7 +19,7 @@ public class ExceptionInfoConfig {
     public GssResponse getResultDto(String ymlKey) {
         Map<String, Object> exceptionInfos = (Map<String, Object>) exceptionsInfo.get("exception");
         Map<String, Object> exceptionInfo = (Map<String, Object>) exceptionInfos.get(ymlKey);
-        if(exceptionInfo == null) {
+        if (exceptionInfo == null) {
             exceptionInfo = (Map<String, Object>) exceptionInfos.get("notdefined");
         }
         GssResponse result = new GssResponse();

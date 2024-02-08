@@ -19,7 +19,7 @@ public class AppConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**");
     }
 
-    LogInterceptor getLogInterceptor(){
+    LogInterceptor getLogInterceptor() {
         return new LogInterceptor();
     }
 

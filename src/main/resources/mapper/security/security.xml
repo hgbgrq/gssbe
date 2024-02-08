@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hgb.gssbe.common.security.SecurityDao">
+
+    <resultMap id="apiUrlAuthMap" type="com.hgb.gssbe.common.security.model.ApiUrlAuth">
+        <result column="API_URL" property="apiUrl" javaType="string"/>
+        <collection property="authList" ofType="java.lang.String">
+            <result column="AUTH_ID" javaType="string"/>
+        </collection>
+    </resultMap>
+
+    <select id="getApiUrlAuth" resultMap="apiUrlAuthMap">
+        select TA.API_URL
+             , TAH.AUTH_ID
+        from gss.TB_API TA
+                 INNER JOIN gss.TB_AUTH_API TAA
+                            ON TAA.API_ID = TA.API_ID AND TAA.USE_YN = 'Y'
+                 INNER JOIN gss.TB_AUTH TAH
+                            ON TAH.AUTH_ID = TAA.AUTH_ID AND TAH.USE_YN = 'Y'
+        WHERE 1 = 1
+          AND TA.USE_YN = 'Y'
+    </select>
+
+    <select id="selectTokenByUserId" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT ACCESS_TOKEN
+        FROM gss.TB_TOKEN
+        WHERE 1 = 1
+          AND USER_ID = #{userId}
+          AND USE_YN = 'Y'
+    </select>
+</mapper>

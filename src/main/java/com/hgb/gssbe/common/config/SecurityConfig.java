@@ -1,13 +1,14 @@
 package com.hgb.gssbe.common.config;
 
 import com.hgb.gssbe.common.security.JwtFilter;
+import com.hgb.gssbe.common.security.SecuritySvc;
 import com.hgb.gssbe.common.security.TokenProvider;
 import com.hgb.gssbe.common.security.handler.JwtAccessDeniedHandler;
 import com.hgb.gssbe.common.security.handler.JwtAuthenticationEntryPoint;
-import org.apache.catalina.User;
+import com.hgb.gssbe.common.security.model.ApiUrlAuth;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -15,12 +16,16 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final SecuritySvc securitySvc;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -30,14 +35,15 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         // 허용되어야 할 경로들, 특히 정적파일들(필요한경우만 설정)
-        return web ->  web.ignoring().requestMatchers("/sw", "/swagger-ui/**","v3/**");
+        return web -> web.ignoring().requestMatchers("/**");
+//        return web -> web.ignoring().requestMatchers("/sw", "/swagger-ui/**", "v3/**", "/api/login");
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity
-    , JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint
-    , JwtAccessDeniedHandler jwtAccessDeniedHandler
-    , TokenProvider tokenProvider) throws Exception {
+            , JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint
+            , JwtAccessDeniedHandler jwtAccessDeniedHandler
+            , TokenProvider tokenProvider) throws Exception {
         httpSecurity
                 .formLogin().disable()
                 .csrf().disable()
@@ -47,23 +53,19 @@ public class SecurityConfig {
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                .and()
-//                .authorizeHttpRequests()
-//                .requestMatchers("/api/login").permitAll()
-//                .requestMatchers("/api/sign-up").permitAll()
                 .and()
-                .addFilterBefore(new JwtFilter(tokenProvider) , UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtFilter(tokenProvider, securitySvc), UsernamePasswordAuthenticationFilter.class);
 
 //        setAuthorizeHttpRequests(httpSecurity);
-
-//        httpSecurity.authorizeHttpRequests().anyRequest().authenticated();
-
         return httpSecurity.build();
 
     }
 
     private void setAuthorizeHttpRequests(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.authorizeHttpRequests().requestMatchers("/api/test2").hasRole("USER2");
+        List<ApiUrlAuth> auth = securitySvc.getApiUrlAuth();
+        for (ApiUrlAuth apiUrlAuth : auth) {
+            httpSecurity.authorizeHttpRequests().requestMatchers(apiUrlAuth.getApiUrl()).hasAnyAuthority(apiUrlAuth.getAuthList().toArray(new String[0]));
+        }
     }
 
 }

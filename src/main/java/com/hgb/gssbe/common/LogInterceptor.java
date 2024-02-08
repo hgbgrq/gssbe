@@ -10,14 +10,14 @@ public class LogInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        log.info("--> {} : {}",request.getMethod(), request.getRequestURI());
+        log.info("--> {} : {}", request.getMethod(), request.getRequestURI());
         return true;
     }
 
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-        log.info("<-- {} : {}",request.getMethod(), request.getRequestURI());
+        log.info("<-- {} : {}", request.getMethod(), request.getRequestURI());
     }
 
 }
