@@ -84,6 +84,7 @@
         GROUP BY TON.ORG_ID, TON.ORG_NAME
     </select>
 
+    
     <update id="modifyProduct" parameterType="com.hgb.gssbe.stac.model.StacProductReq">
         UPDATE TB_PRODUCT
         SET
