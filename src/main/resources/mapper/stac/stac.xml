@@ -84,13 +84,13 @@
         GROUP BY TON.ORG_ID, TON.ORG_NAME
     </select>
 
-    
+
     <update id="modifyProduct" parameterType="com.hgb.gssbe.stac.model.StacProductReq">
         UPDATE TB_PRODUCT
         SET
             PRODUCT_PRICE = #{productPrice}
             <if test = "totalPrdPrc != null and totalPrdPrc != ''">
-                PRICE = #{totalPrdPrc}
+                , PRICE = #{totalPrdPrc}
             </if>
         WHERE 1 = 1
           AND PRODUCT_ID = #{productId}
