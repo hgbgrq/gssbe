@@ -17,6 +17,7 @@
             <result column="PRODUCT_QTY" property="productQty" javaType="string"/>
             <result column="PRODUCT_PRICE" property="productPrice" javaType="string"/>
             <result column="PRODUCT_ETC" property="productEtc" javaType="string"/>
+            <result column="TOTAL_PRD_PRC" property="totalPrdPrc" javaType="Integer"/>
         </collection>
     </resultMap>
 
@@ -94,6 +95,7 @@
              , TP.PRODUCT_QTY           PRODUCT_QTY
              , TP.PRODUCT_PRICE         PRODUCT_PRICE
              , TP.PRODUCT_ETC           PRODUCT_ETC
+             , TP.PRICE TOTAL_PRD_PRC
         FROM TB_ORDER TOR
                  LEFT JOIN TB_PRODUCT TP
                            ON TP.ORDER_ID = TOR.ORDER_ID
@@ -138,6 +140,7 @@
                               , PRODUCT_COLOR
                               , PRODUCT_QTY
                               , PRODUCT_PRICE
+                              , PRICE
                               , PRODUCT_ETC
                               , PRODUCT_SORT
                               , USE_YN
@@ -151,6 +154,7 @@
                , #{productColor}
                , #{productQty}
                , #{productPrice}
+               , #{totalPrdPrc}
                , #{productEtc}
                , #{productSort}
                , 'Y'

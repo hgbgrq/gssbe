@@ -47,6 +47,9 @@ public class OrderSvc {
         String orderId = UUID.randomUUID().toString();
         Integer sortCount = 0;
         for (OrderEnrollProductReq product : orderEnrollInfoReq.getProductList()) {
+            if ((product.getProductPrice() != null && product.getProductPrice() != 0) && (product.getTotalPrdPrc() == null || product.getTotalPrdPrc() == 0)) {
+                product.setTotalPrdPrc(product.getProductQty() * product.getProductPrice());
+            }
             OrderProduct orderProduct = OrderProduct.builder()
                     .productId(UUID.randomUUID().toString())
                     .orderId(orderId)
@@ -56,7 +59,10 @@ public class OrderSvc {
                     .productSize(product.getProductSize())
                     .productQty(product.getProductQty())
                     .productSort(sortCount)
-                    .productEtc(product.getProductEtc()).build();
+                    .productEtc(product.getProductEtc())
+                    .totalPrdPrc(product.getTotalPrdPrc())
+                    .productPrice(product.getProductPrice())
+                    .build();
             orderDao.insertOrderProduct(orderProduct);
             sortCount++;
         }
@@ -183,6 +189,9 @@ public class OrderSvc {
         Integer sortCount = 0;
 
         for (OrderProduct product : orderModifyReq.getProductList()) {
+            if ((product.getProductPrice() != null && product.getProductPrice() != 0) && (product.getTotalPrdPrc() == null || product.getTotalPrdPrc() == 0)) {
+                product.setTotalPrdPrc(product.getProductQty() * product.getProductPrice());
+            }
             OrderProduct orderProduct = OrderProduct.builder()
                     .productId(UUID.randomUUID().toString())
                     .orderId(orderModifyReq.getOrderId())
@@ -192,7 +201,10 @@ public class OrderSvc {
                     .productSize(product.getProductSize())
                     .productQty(product.getProductQty())
                     .productSort(sortCount)
-                    .productEtc(product.getProductEtc()).build();
+                    .productEtc(product.getProductEtc())
+                    .productPrice(product.getProductPrice())
+                    .totalPrdPrc(product.getTotalPrdPrc())
+                    .build();
             if (StringUtils.isNotEmpty(orderProduct.getProductItem())
                     && StringUtils.isNotEmpty(orderProduct.getProductStyleNo())) {
                 orderDao.insertOrderProduct(orderProduct);

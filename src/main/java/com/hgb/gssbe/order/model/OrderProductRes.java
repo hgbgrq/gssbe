@@ -24,4 +24,6 @@ public class OrderProductRes {
 
     private String createUserId;
 
+    private Integer totalPrdPrc;
+
 }

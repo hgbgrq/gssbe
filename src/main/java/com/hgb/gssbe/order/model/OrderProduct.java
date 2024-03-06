@@ -25,6 +25,8 @@ public class OrderProduct {
 
     private Integer productPrice;
 
+    private Integer totalPrdPrc;
+
     private String productEtc;
 
     private String createUserId;

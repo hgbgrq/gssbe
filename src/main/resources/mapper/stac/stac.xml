@@ -17,6 +17,7 @@
             <result column="PRODUCT_PRICE" property="productPrice" javaType="Integer"/>
             <result column="PRODUCT_ETC" property="productEtc" javaType="string"/>
             <result column="TOTAL_PRD_PRC" property="totalPrdPrc" javaType="Integer"/>
+            <result column="TAX_PRICE" property="taxPrice" javaType="Integer"/>
         </collection>
     </resultMap>
 
@@ -36,7 +37,8 @@
         , TP.PRODUCT_QTY
         , TP.PRODUCT_PRICE
         , TP.PRODUCT_ETC
-        , COALESCE (PRICE, CAST(TP.PRODUCT_PRICE as unsigned) * cast(TP.PRODUCT_QTY as unsigned) * 1.1) TOTAL_PRD_PRC
+        , TP.PRICE TOTAL_PRD_PRC
+        , TP.PRICE * 1.1 TAX_PRICE
         FROM
         TB_PRODUCT TP
         LEFT JOIN TB_ORDER TOR

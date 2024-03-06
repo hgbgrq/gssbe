@@ -21,6 +21,8 @@ public class OrderEnrollProductReq {
 
     private String productEtc;
 
+    private Integer totalPrdPrc;
+
     public String toStringJson() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
     }

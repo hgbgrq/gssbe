@@ -29,4 +29,6 @@ public class StacProduct {
 
     private String orderDeadLineDate;
 
+    private Integer taxPrice;
+
 }
