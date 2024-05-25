@@ -32,9 +32,7 @@ jobs:
     
     - name: Build with Gradle dev
       if: github.ref == 'refs/heads/develop'
-      uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 
-      with:
-        arguments: build -Dspring.profiles.active=dev
+      run: ./gradlew clean bootjar -Pprofile=dev
 
         
     - name: Upload artifact
