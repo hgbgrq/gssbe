@@ -1,3 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:log4jdbc:mysql://hgbgrq.iptime.org:13306/gss
+    username: root
+    password: 3826
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+
 server:
   port: 9000
 
