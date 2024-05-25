@@ -98,5 +98,5 @@ jobs:
             cd /gss/backEnd/jar/dev/build2/
             docker build -t gss_server_dev ./
             docker rm -f gss_server_dev
-            docker run -d -i -p 8090:8090 --name gss_server gss_server_dev
+            docker run -d -i -p 8090:8090 --name gss_server_dev gss_server_dev
             docker cp /gss/frontEnd/gssFe/baseOrder.xlsx gss_server_dev:/
