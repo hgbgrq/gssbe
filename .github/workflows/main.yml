@@ -28,7 +28,7 @@ jobs:
       
     - name: Build with Gradle prod
       if: github.ref == 'refs/heads/master'
-      run: ./gradlew build -Dspring.profiles.active=prod
+      run: ./gradlew clean bootjar -Pprofile=prod
     
     - name: Build with Gradle dev
       if: github.ref == 'refs/heads/develop'
