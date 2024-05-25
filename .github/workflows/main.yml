@@ -2,9 +2,13 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "master" ]
+    branches: 
+      - master
+      - develop
   pull_request:
-    branches: [ "master" ]
+    branches:
+      - master
+      - develop
 
 permissions:
   contents: read
@@ -21,10 +25,16 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-    - name: Build with Gradle
+    - name: Build with Gradle prod
+      if: github.ref == 'refs/heads/master'
       uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 
       with:
-        arguments: build
+        arguments: build -Dspring.profiles.active=prod
+    - name: Build with Gradle dev
+      if: github.ref == 'refs/heads/develop'
+      uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 
+      with:
+        arguments: build -Dspring.profiles.active=dev
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
@@ -40,7 +50,8 @@ jobs:
         with:
           name: cicdsample
           path: build2
-      - name: copy file via ssh password
+      - name: download jar prod
+        if: github.ref == 'refs/heads/master'
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.SERVER_IP }}
@@ -48,8 +59,9 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.PORT }}
           source: build2/*
-          target: /gss/backEnd/jar
-      - name: executing remote ssh commands using password
+          target: /gss/backEnd/jar/prod
+      - name: executing remote ssh commands prod
+        if: github.ref == 'refs/heads/master'
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SERVER_IP }}
@@ -57,8 +69,34 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.PORT }}
           script: |
-            cd /gss/backEnd/jar/build2/
-            docker build -t gss_server ./
-            docker rm -f gss_server
-            docker run -d -i -p 9000:9000 --name gss_server gss_server
-            docker cp /gss/frontEnd/gssFe/baseOrder.xlsx gss_server:/
+            cd /gss/backEnd/jar/prod/build2/
+            docker build -t gss_server_prod ./
+            docker rm -f gss_server_prod
+            docker run -d -i -p 8080:8080 --name gss_server_prod gss_server_prod
+            docker cp /gss/frontEnd/gssFe/baseOrder.xlsx gss_server_prod:/
+            
+      - name: download jar dev
+        if: github.ref == 'refs/heads/develop'
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.PORT }}
+          source: build2/*
+          target: /gss/backEnd/jar/dev
+          
+      - name: executing remote ssh commands prod
+        if: github.ref == 'refs/heads/master'
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd /gss/backEnd/jar/dev/build2/
+            docker build -t gss_server_dev ./
+            docker rm -f gss_server_dev
+            docker run -d -i -p 8090:8090 --name gss_server gss_server_dev
+            docker cp /gss/frontEnd/gssFe/baseOrder.xlsx gss_server_dev:/
