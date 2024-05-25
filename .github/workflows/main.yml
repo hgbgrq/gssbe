@@ -25,11 +25,16 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
+
+
+    - name: Set active profile to prod
+      run: echo "spring.profiles.active=prod" >> gradle.properties
+      
     - name: Build with Gradle prod
       if: github.ref == 'refs/heads/master'
       uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 
       with:
-        arguments: build -Dspring.profiles.active=prod
+        arguments: build
     - name: Build with Gradle dev
       if: github.ref == 'refs/heads/develop'
       uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 
